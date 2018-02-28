@@ -1,2 +1,2 @@
-# microservices_skeleton_net-core
-Introduction for Microservices skeleton for .Net Core
+# Introduction for Microservices skeleton for .Net Core
+This repository is a part of a backbone for starter projects
