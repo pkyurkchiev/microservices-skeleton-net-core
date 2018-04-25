@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  identity.api:
+    image: identity.api
+    build:
+      context: .
+      dockerfile: Services/Identity/Identity.API/Dockerfile
+    depends_on:
+      - sql.data
+      
+  locations.api:
+    image: locations.api
+    build:
+      context: .
+      dockerfile: Services/Locations/Locations.API/Dockerfile
+    depends_on:
+      - nosql.data    
+
+  status.web:
+    image: status.web
+    build:
+      context: .
+      dockerfile: WebApps/Status.Web/Dockerfile
+
+  sql.data:
+    image: microsoft/mssql-server-linux:2017-latest
+
+  nosql.data:
+    image: mongo

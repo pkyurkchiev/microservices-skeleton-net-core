@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  identity.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80      
+      - SpaClient=http://localhost:5100
+      - ConnectionString=${Skeleton_AZURE_IDENTITY_DB:-Server=sql.data;Database=SkeletonOnContainers.Services.IdentityDb;User Id=sa;Password=Pass@word}
+      - IdentityUrlExternal=http://localhost:5101
+      - LocationApiClient=http://localhost:5102
+    ports:
+      - "5101:80"
+
+  locations.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${Skeleton_AZURE_COSMOSDB:-mongodb://nosql.data}
+      - Database=LocationsDb
+      - IdentityUrlExternal=http://localhost:5101
+    ports:
+      - "5102:80"
+      
+  status.web:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - IdentityUrl=http://identity.api/hc
+      - LocationsUrl=http://locations.api/hc
+    ports:
+      - "5110:80"
+
+  sql.data:
+    environment:
+      - MSSQL_SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
+    ports:
+      - "5433:1433"
+      
+  nosql.data:
+    ports:
+      - "27017:27017"
