@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Locations.API", "Services\L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Locations.Data", "Services\Locations\Locations.Data\Locations.Data.csproj", "{F3F52120-005D-4967-96B7-CD0861C4E0EB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Locations.Infrastructure", "Services\Locations\Locations.Infrastructure\Locations.Infrastructure.csproj", "{992C7A01-F643-4975-BC11-173F39590653}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,10 @@ Global
 		{F3F52120-005D-4967-96B7-CD0861C4E0EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3F52120-005D-4967-96B7-CD0861C4E0EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3F52120-005D-4967-96B7-CD0861C4E0EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{992C7A01-F643-4975-BC11-173F39590653}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{992C7A01-F643-4975-BC11-173F39590653}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{992C7A01-F643-4975-BC11-173F39590653}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{992C7A01-F643-4975-BC11-173F39590653}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +105,7 @@ Global
 		{8BE797D0-EC5D-4213-A764-E6A032C7E7B6} = {5907061F-6AD8-4646-A7FD-BBE3D4265344}
 		{FEC8FA4E-1E63-4EBD-BF24-ABA8DF05CC7A} = {9E93ABD2-D5F8-4A85-B05C-F6E12120D63B}
 		{F3F52120-005D-4967-96B7-CD0861C4E0EB} = {9E93ABD2-D5F8-4A85-B05C-F6E12120D63B}
+		{992C7A01-F643-4975-BC11-173F39590653} = {9E93ABD2-D5F8-4A85-B05C-F6E12120D63B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {92FB6DB3-FBAF-4478-BF31-F0FA54865BD5}
