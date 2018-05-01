@@ -1,8 +1,5 @@
-﻿using IdentityServer4;
-using IdentityServer4.Models;
-using IdentityServer4.Test;
+﻿using IdentityServer4.Models;
 using System.Collections.Generic;
-using System.Security.Claims;
 
 namespace Identity.API.Configuration
 {
@@ -12,7 +9,7 @@ namespace Identity.API.Configuration
         {
             return new List<ApiResource>
             {
-                new ApiResource("identity", "Identity Service"),
+                //new ApiResource("identity", "Identity Service"),
                 new ApiResource("locations", "Locations Service")
             };
         }
@@ -33,16 +30,16 @@ namespace Identity.API.Configuration
                 // Resource Owner Password Flow
                 new Client
                 {
-                    ClientId = "optimum_client_id",
-                    ClientName = "Optimum",
+                    ClientId = "skeleton_client_id",
+                    ClientName = "Skeleton",
                     ClientSecrets = { new Secret("secret".Sha256()) },
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                    AllowedCorsOrigins = { $"{clientsUrl["Spa"]}", $"{clientsUrl["LocationsApi"]}", $"{clientsUrl["OptimumApi"]}" },
+                    AllowedCorsOrigins = { $"{clientsUrl["Spa"]}", $"{clientsUrl["LocationsApi"]}" },
                     AllowAccessTokensViaBrowser = true,
 
                     AllowedScopes =
                     {
-                        "identity",
+                        //"identity",
                         "locations"
                     }
                 }

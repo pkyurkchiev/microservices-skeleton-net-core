@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using EventBus;
+using EventBus.Abstractions;
 using Locations.Data;
 using Locations.Infrastructure.Repositories;
 using Locations.Infrastructure.Services;
@@ -18,6 +20,10 @@ using System.Threading.Tasks;
 
 namespace Locations.API
 {
+    using EventBusRabbitMQ;
+    using Microsoft.AspNetCore.Http;
+    using RabbitMQ.Client;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -52,11 +58,41 @@ namespace Locations.API
 
             services.Configure<LocationSettings>(Configuration);
 
+            services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
+
+                var factory = new ConnectionFactory()
+                {
+                    HostName = Configuration["EventBusConnection"]
+                };
+
+                if (!string.IsNullOrEmpty(Configuration["EventBusUserName"]))
+                {
+                    factory.UserName = Configuration["EventBusUserName"];
+                }
+
+                if (!string.IsNullOrEmpty(Configuration["EventBusPassword"]))
+                {
+                    factory.Password = Configuration["EventBusPassword"];
+                }
+
+                var retryCount = 5;
+                if (!string.IsNullOrEmpty(Configuration["EventBusRetryCount"]))
+                {
+                    retryCount = int.Parse(Configuration["EventBusRetryCount"]);
+                }
+
+                return new DefaultRabbitMQPersistentConnection(factory, logger, retryCount);
+            });
+
             services.AddHealthChecks(checks =>
             {
                 checks.AddValueTaskCheck("HTTP Endpoint", () => new
                     ValueTask<IHealthCheckResult>(HealthCheckResult.Healthy("Ok")));
             });
+            
+            RegisterEventBus(services);
 
             // Add framework services.
             services.AddSwaggerGen(options =>
@@ -93,6 +129,8 @@ namespace Locations.API
 
             services.AddTransient<ILocationsRepository, LocationsRepository>();
             services.AddTransient<ILocationsService, LocationsService>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IIdentityService, IdentityService>();
 
             // autofac
             var container = new ContainerBuilder();
@@ -141,6 +179,29 @@ namespace Locations.API
                 options.Audience = "locations";
                 options.RequireHttpsMetadata = false;
             });
+        }
+
+        private void RegisterEventBus(IServiceCollection services)
+        {
+            var subscriptionClientName = Configuration["SubscriptionClientName"];
+
+            services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
+            {
+                var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQPersistentConnection>();
+                var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
+                var logger = sp.GetRequiredService<ILogger<EventBusRabbitMQ>>();
+                var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
+
+                var retryCount = 5;
+                if (!string.IsNullOrEmpty(Configuration["EventBusRetryCount"]))
+                {
+                    retryCount = int.Parse(Configuration["EventBusRetryCount"]);
+                }
+
+                return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
+            });
+
+            services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
         }
     }
 }

@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\EventMQ\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\Locations.Data\Locations.Data.csproj" />
   </ItemGroup>
 

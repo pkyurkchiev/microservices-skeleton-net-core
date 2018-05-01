@@ -18,7 +18,10 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${Skeleton_AZURE_COSMOSDB:-mongodb://nosql.data}
       - Database=LocationsDb
-      - IdentityUrlExternal=http://localhost:5101
+      - IdentityUrlExternal=http://10.0.75.1:5101
+      - EventBusConnection=${Skeleton_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${Skeleton_SERVICE_BUS_USERNAME}
+      - EventBusPassword=${Skeleton_SERVICE_BUS_PASSWORD} 
     ports:
       - "5102:80"
       
@@ -42,3 +45,8 @@ services:
   nosql.data:
     ports:
       - "27017:27017"
+
+  rabbitmq:
+    ports:
+      - "15672:15672"  # Important: Remove on production environment
+      - "5672:5672"    # Important: Remove on production environment

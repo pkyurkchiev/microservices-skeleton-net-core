@@ -8,24 +8,26 @@ namespace Locations.API.Controllers
 {
     using Locations.Data.Entities;
     using Locations.Infrastructure.Services;
+    using Locations.Infrastructure.ViewModels;
+    using System.Collections.Generic;
 
     [Authorize]
     [Route("api/v1/[controller]")]
     public class LocationsController : Controller
     {
         private readonly ILocationsService _locationsService;
-        //private readonly IIdentityService _identityService;
+        private readonly IIdentityService _identityService;
 
-        public LocationsController(ILocationsService locationsService/*, IIdentityService identityService*/)
+        public LocationsController(ILocationsService locationsService, IIdentityService identityService)
         {
             _locationsService = locationsService ?? throw new ArgumentNullException(nameof(locationsService));
-            //_identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
+            _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
         }
 
         //GET api/v1/[controller]/user/1
         [Route("user/{userId:guid}")]
         [HttpGet]
-        [ProducesResponseType(typeof(UserLocation), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(UserLocation), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetUserLocation(Guid userId)
         {
             var userLocation = await _locationsService.GetUserLocation(userId.ToString());
@@ -53,18 +55,18 @@ namespace Locations.API.Controllers
         }
 
         //POST api/v1/[controller]/
-        //[Route("")]
-        //[HttpPost]
+        [Route("")]
+        [HttpPost]
         //[ProducesResponseType((int)HttpStatusCode.OK)]
         //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        //public async Task<IActionResult> CreateOrUpdateUserLocation([FromBody]LocationRequest newLocReq)
-        //{
-        //    var userId = _identityService.GetUserIdentity();
-        //    var result = await _locationsService.AddOrUpdateUserLocation(userId, newLocReq);
+        public async Task<IActionResult> CreateOrUpdateUserLocation([FromBody]LocationRequest newLocReq)
+        {
+            var userId = _identityService.GetUserIdentity();
+            var result = await _locationsService.AddOrUpdateUserLocation(userId, newLocReq);
 
-        //    return result ?
-        //        (IActionResult)Ok() :
-        //        (IActionResult)BadRequest();
-        //}
+            return result ?
+                (IActionResult)Ok() :
+                (IActionResult)BadRequest();
+        }
     }
 }

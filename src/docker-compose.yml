@@ -15,7 +15,8 @@ services:
       context: .
       dockerfile: Services/Locations/Locations.API/Dockerfile
     depends_on:
-      - nosql.data    
+      - nosql.data
+      - rabbitmq
 
   status.web:
     image: status.web
@@ -28,3 +29,6 @@ services:
 
   nosql.data:
     image: mongo
+
+  rabbitmq:
+    image: rabbitmq:3.7-management

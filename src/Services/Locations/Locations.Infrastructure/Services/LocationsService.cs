@@ -1,4 +1,7 @@
-﻿using Locations.Infrastructure.Repositories;
+﻿using EventBus.Abstractions;
+using Locations.Infrastructure.Exceptions;
+using Locations.Infrastructure.Repositories;
+using Locations.Infrastructure.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -6,16 +9,17 @@ using System.Threading.Tasks;
 namespace Locations.Infrastructure.Services
 {
     using Locations.Data.Entities;
+    using Locations.Infrastructure.IntegrationEvents.Events;
 
     public class LocationsService : ILocationsService
     {
         private readonly ILocationsRepository _locationsRepository;
-        //private readonly IEventBus _eventBus;
+        private readonly IEventBus _eventBus;
 
-        public LocationsService(ILocationsRepository locationsRepository/*, IEventBus eventBus*/)
+        public LocationsService(ILocationsRepository locationsRepository, IEventBus eventBus)
         {
             _locationsRepository = locationsRepository ?? throw new ArgumentNullException(nameof(locationsRepository));
-            //_eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
+            _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
         public async Task<Locations> GetLocation(int locationId)
@@ -33,52 +37,53 @@ namespace Locations.Infrastructure.Services
             return await _locationsRepository.GetLocationListAsync();
         }
 
-        //public async Task<bool> AddOrUpdateUserLocation(string userId, LocationRequest currentPosition)
-        //{
-        //    // Get the list of ordered regions the user currently is within
-        //    var currentUserAreaLocationList = await _locationsRepository.GetCurrentUserRegionsListAsync(currentPosition);
+        public async Task<bool> AddOrUpdateUserLocation(string userId, LocationRequest currentPosition)
+        {
+            // Get the list of ordered regions the user currently is within
+            var currentUserAreaLocationList = await _locationsRepository.GetCurrentUserRegionsListAsync(currentPosition);
 
-        //    if (currentUserAreaLocationList is null)
-        //    {
-        //        throw new LocationDomainException("User current area not found");
-        //    }
+            if (currentUserAreaLocationList is null)
+            {
+                throw new LocationDomainException("User current area not found");
+            }
 
-        //    // If current area found, then update user location
-        //    var locationAncestors = new List<string>();
-        //    var userLocation = await _locationsRepository.GetUserLocationAsync(userId);
-        //    userLocation = userLocation ?? new UserLocation();
-        //    userLocation.UserId = userId;
-        //    userLocation.LocationId = currentUserAreaLocationList[0].LocationId;
-        //    userLocation.UpdateDate = DateTime.UtcNow;
-        //    await _locationsRepository.UpdateUserLocationAsync(userLocation);
+            // If current area found, then update user location
+            var locationAncestors = new List<string>();
+            var userLocation = await _locationsRepository.GetUserLocationAsync(userId);
+            userLocation = userLocation ?? new UserLocation();
+            userLocation.UserId = userId;
+            userLocation.LocationId = currentUserAreaLocationList[0].LocationId;
+            userLocation.UpdateDate = DateTime.UtcNow;
+            await _locationsRepository.UpdateUserLocationAsync(userLocation);
 
-        //    // Publish integration event to update marketing read data model
-        //    // with the new locations updated
-        //    //PublishNewUserLocationPositionIntegrationEvent(userId, currentUserAreaLocationList);
+            // Publish integration event to update marketing read data model
+            // with the new locations updated
+            //PublishNewUserLocationPositionIntegrationEvent(userId, currentUserAreaLocationList);
 
-        //    return true;
-        //}
+            return true;
+        }
 
-        //private void PublishNewUserLocationPositionIntegrationEvent(string userId, List<Locations> newLocations)
-        //{
-        //    var newUserLocations = MapUserLocationDetails(newLocations);
-        //    var @event = new UserLocationUpdatedIntegrationEvent(userId, newUserLocations);
-        //    _eventBus.Publish(@event);
-        //}
+        private void PublishNewUserLocationPositionIntegrationEvent(string userId, List<Locations> newLocations)
+        {
+            var newUserLocations = MapUserLocationDetails(newLocations);
+            var @event = new UserLocationUpdatedIntegrationEvent(userId, newUserLocations);
+            _eventBus.Publish(@event);
+        }
 
-        //private List<UserLocationDetails> MapUserLocationDetails(List<Locations> newLocations)
-        //{
-        //    var result = new List<UserLocationDetails>();
-        //    newLocations.ForEach(location => {
-        //        result.Add(new UserLocationDetails()
-        //        {
-        //            LocationId = location.LocationId,
-        //            Code = location.Code,
-        //            Description = location.Description
-        //        });
-        //    });
+        private List<UserLocationDetails> MapUserLocationDetails(List<Locations> newLocations)
+        {
+            var result = new List<UserLocationDetails>();
+            newLocations.ForEach(location =>
+            {
+                result.Add(new UserLocationDetails()
+                {
+                    LocationId = location.LocationId,
+                    Code = location.Code,
+                    Description = location.Description
+                });
+            });
 
-        //    return result;
-        //}
+            return result;
+        }
     }
 }
