@@ -1,8 +1,8 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Locations.API.Repositories;
-using Locations.API.Services;
 using Locations.Data;
+using Locations.Infrastructure.Repositories;
+using Locations.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,7 +18,6 @@ using System.Threading.Tasks;
 
 namespace Locations.API
 {
-
     public class Startup
     {
         public Startup(IConfiguration configuration)

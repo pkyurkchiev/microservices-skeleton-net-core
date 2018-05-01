@@ -5,6 +5,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Exceptions\**" />
+    <Compile Remove="Repositories\**" />
+    <Compile Remove="Services\**" />
+    <Compile Remove="ViewModels\**" />
+    <Content Remove="Exceptions\**" />
+    <Content Remove="Repositories\**" />
+    <Content Remove="Services\**" />
+    <Content Remove="ViewModels\**" />
+    <EmbeddedResource Remove="Exceptions\**" />
+    <EmbeddedResource Remove="Repositories\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <EmbeddedResource Remove="ViewModels\**" />
+    <None Remove="Exceptions\**" />
+    <None Remove="Repositories\**" />
+    <None Remove="Services\**" />
+    <None Remove="ViewModels\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -24,6 +43,7 @@
     <ProjectReference Include="..\..\..\BuildingBlocks\HealthChecks\Microsoft.AspNetCore.HealthChecks\Microsoft.AspNetCore.HealthChecks.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\HealthChecks\Microsoft.Extensions.HealthChecks\Microsoft.Extensions.HealthChecks.csproj" />
     <ProjectReference Include="..\Locations.Data\Locations.Data.csproj" />
+    <ProjectReference Include="..\Locations.Infrastructure\Locations.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

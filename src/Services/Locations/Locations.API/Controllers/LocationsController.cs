@@ -1,14 +1,13 @@
-﻿using Locations.API.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace Locations.API.Controllers
 {
     using Locations.Data.Entities;
+    using Locations.Infrastructure.Services;
 
     [Authorize]
     [Route("api/v1/[controller]")]
