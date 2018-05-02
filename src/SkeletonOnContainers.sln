@@ -45,6 +45,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus", "BuildingBlocks\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBusRabbitMQ", "BuildingBlocks\EventMQ\EventBusRabbitMQ\EventBusRabbitMQ.csproj", "{60E4D13B-0F08-421A-B1C7-1ACC32521AA7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSPA.Administration", "WebApps\WebSPA.Administration\WebSPA.Administration.csproj", "{DD7E9462-267F-42C9-B909-025F193025C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{60E4D13B-0F08-421A-B1C7-1ACC32521AA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60E4D13B-0F08-421A-B1C7-1ACC32521AA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60E4D13B-0F08-421A-B1C7-1ACC32521AA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD7E9462-267F-42C9-B909-025F193025C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD7E9462-267F-42C9-B909-025F193025C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD7E9462-267F-42C9-B909-025F193025C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD7E9462-267F-42C9-B909-025F193025C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -123,6 +129,7 @@ Global
 		{75D39443-F2F1-47F2-A350-50D354269665} = {3CA31212-1850-4E0F-BCC2-E27B0FA9F2F3}
 		{9307114C-11F7-4E69-8D0C-FF8B61E5D92D} = {75D39443-F2F1-47F2-A350-50D354269665}
 		{60E4D13B-0F08-421A-B1C7-1ACC32521AA7} = {75D39443-F2F1-47F2-A350-50D354269665}
+		{DD7E9462-267F-42C9-B909-025F193025C7} = {46E69741-840A-4196-AFFD-1E5DC2DF987B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {92FB6DB3-FBAF-4478-BF31-F0FA54865BD5}

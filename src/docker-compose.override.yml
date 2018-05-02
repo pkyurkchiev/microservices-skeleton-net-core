@@ -34,6 +34,13 @@ services:
     ports:
       - "5110:80"
 
+  webspa.administration:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+    ports:
+      - "5111:80"
+
   sql.data:
     environment:
       - MSSQL_SA_PASSWORD=Pass@word

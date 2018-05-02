@@ -2,7 +2,7 @@ version: '3'
 
 services:
   identity.api:
-    image: identity.api
+    image: skeleton/identity.api
     build:
       context: .
       dockerfile: Services/Identity/Identity.API/Dockerfile
@@ -10,7 +10,7 @@ services:
       - sql.data
       
   locations.api:
-    image: locations.api
+    image: skeleton/locations.api
     build:
       context: .
       dockerfile: Services/Locations/Locations.API/Dockerfile
@@ -19,10 +19,19 @@ services:
       - rabbitmq
 
   status.web:
-    image: status.web
+    image: skeleton/status.web
     build:
       context: .
       dockerfile: WebApps/Status.Web/Dockerfile
+
+  webspa.administration:
+    image: skeleton/webspa.administration
+    build:
+      context: .
+      dockerfile: WebApps/WebSPA.Administration/Dockerfile    
+    depends_on:
+      - identity.api
+      - locations.api
 
   sql.data:
     image: microsoft/mssql-server-linux:2017-latest
