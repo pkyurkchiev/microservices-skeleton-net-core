@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 services:
   identity.api:
@@ -22,13 +22,19 @@ services:
     image: skeleton/status.web
     build:
       context: .
-      dockerfile: WebApps/Status.Web/Dockerfile
+      dockerfile: WebApplications/Status.Web/Dockerfile
+      
+  webapi.base:
+    image: skeleton/webapi.base
+    build:
+      context: .
+      dockerfile: ApiGateways/WebAPI.Base/Dockerfile
 
   webspa.administration:
     image: skeleton/webspa.administration
     build:
       context: .
-      dockerfile: WebApps/WebSPA.Administration/Dockerfile    
+      dockerfile: WebApplications/WebSPA.Administration/Dockerfile    
     depends_on:
       - identity.api
       - locations.api

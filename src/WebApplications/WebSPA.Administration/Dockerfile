@@ -12,10 +12,10 @@ EXPOSE 80
 FROM microsoft/aspnetcore-build:2.0 AS build
 WORKDIR /src
 COPY *.sln ./
-COPY WebApps/WebSPA.Administration/WebSPA.Administration.csproj WebApps/WebSPA.Administration/
+COPY WebApplications/WebSPA.Administration/WebSPA.Administration.csproj WebApplications/WebSPA.Administration/
 RUN dotnet restore
 COPY . .
-WORKDIR /src/WebApps/WebSPA.Administration
+WORKDIR /src/WebApplications/WebSPA.Administration
 RUN dotnet build -c Release -o /app
 
 FROM build AS publish

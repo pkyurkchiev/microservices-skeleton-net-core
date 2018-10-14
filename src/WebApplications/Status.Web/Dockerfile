@@ -5,10 +5,10 @@ EXPOSE 80
 FROM microsoft/aspnetcore-build:2.0 AS build
 WORKDIR /src
 COPY *.sln ./
-COPY WebApps/Status.Web/Status.Web.csproj WebApps/Status.Web/
+COPY WebApplications/Status.Web/Status.Web.csproj WebApplications/Status.Web/
 RUN dotnet restore
 COPY . .
-WORKDIR /src/WebApps/Status.Web
+WORKDIR /src/WebApplications/Status.Web
 RUN dotnet build -c Release -o /app
 
 FROM build AS publish

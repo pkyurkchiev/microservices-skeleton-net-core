@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 services:
   identity.api:
@@ -33,6 +33,15 @@ services:
       - LocationsUrl=http://locations.api/hc
     ports:
       - "5110:80"
+      
+  webapi.base:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - IdentityUrl=http://identity.api
+    ports:
+      - "5200:80"
+    volumes:
+      - ./ApiGateways/WebSPA.Administration/apigw:/app/configuration
 
   webspa.administration:
     environment:
