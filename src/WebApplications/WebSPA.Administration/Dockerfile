@@ -1,25 +1,41 @@
-FROM microsoft/aspnetcore:2.0 AS base
-# BEGIN MODIFICATION - Node is needed for development (but not production)
-RUN apt-get update && \
-    apt-get install -y wget && \
-    apt-get install -y gnupg2 && \
+FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
+# Setup NodeJs
+RUN apt-get update -qq && \
+    apt-get install -qq -y wget && \
+    apt-get install -qq -y gnupg2 && \
     wget -qO- https://deb.nodesource.com/setup_10.x | bash - && \
-    apt-get install -y build-essential nodejs
-# END MODIFICATION
+    apt-get install -qq -y build-essential nodejs && \
+    apt-get install -qq -y nginx
+# End setup
 WORKDIR /app
 EXPOSE 80
+EXPOSE 443
 
-FROM microsoft/aspnetcore-build:2.0 AS build
+FROM microsoft/dotnet:2.1-sdk AS build
+# Setup NodeJs
+RUN apt-get update -qq && \
+    apt-get install -qq -y wget && \
+    apt-get install -qq -y gnupg2 && \
+    wget -qO- https://deb.nodesource.com/setup_8.x | bash - && \
+    apt-get install -qq -y build-essential nodejs && \
+    apt-get install -qq -y nginx
+# End setup
 WORKDIR /src
 COPY *.sln ./
-COPY WebApplications/WebSPA.Administration/WebSPA.Administration.csproj WebApplications/WebSPA.Administration/
-RUN dotnet restore
+COPY ["WebApplications/WebSPA.Administration/WebSPA.Administration.csproj", "WebApplications/WebSPA.Administration/"]
+RUN dotnet restore "WebApplications/WebSPA.Administration/WebSPA.Administration.csproj" -nowarn:msb3202,nu1503
+COPY ["WebApplications/WebSPA.Administration/ClientApp/package.json", "WebApplications/WebSPA.Administration/ClientApp/"]
+
+RUN cd WebApplications/WebSPA.Administration/ClientApp \
+    && npm i --silent
+	
 COPY . .
-WORKDIR /src/WebApplications/WebSPA.Administration
-RUN dotnet build -c Release -o /app
+WORKDIR "/src/WebApplications/WebSPA.Administration"
+
+RUN dotnet build "WebSPA.Administration.csproj" -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish -c Release -o /app
+RUN dotnet publish "WebSPA.Administration.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
