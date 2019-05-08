@@ -226,7 +226,7 @@ export class SecurityService {
     return this._http.get<string[]>(this.authorityUrl + '/connect/userinfo', {
       headers: this.headers//,
       //params: ''
-    }).pipe(map(res => res.json()));
+    }).pipe(map(res => res));
   }
 
   private setHeaders() {

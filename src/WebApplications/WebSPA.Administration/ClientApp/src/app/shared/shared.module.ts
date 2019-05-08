@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 // Services
 import { ConfigurationService } from './services/configuration.service';
 import { StorageService } from './services/storage.service';
+import { SecurityService } from './services/security.service';
 
 @NgModule({
     imports: [
@@ -49,7 +50,7 @@ export class SharedModule {
                 // Providers
                 //DataService,
                 //BasketWrapperService,
-                //SecurityService,
+                SecurityService,
                 ConfigurationService,
                 StorageService
                 //SignalrService
