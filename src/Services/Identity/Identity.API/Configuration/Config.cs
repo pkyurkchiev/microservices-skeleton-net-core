@@ -1,4 +1,5 @@
-﻿using IdentityServer4.Models;
+﻿using IdentityServer4;
+using IdentityServer4.Models;
 using System.Collections.Generic;
 
 namespace Identity.API.Configuration
@@ -42,7 +43,25 @@ namespace Identity.API.Configuration
                         //"identity",
                         "locations"
                     }
-                }
+                },
+                // JavaScript Client
+                new Client
+                {
+                    ClientId = "js",
+                    ClientName = "eShop SPA OpenId Client",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+                    RedirectUris =           { $"{clientsUrl["Spa"]}/" },
+                    RequireConsent = false,
+                    PostLogoutRedirectUris = { $"{clientsUrl["Spa"]}/" },
+                    AllowedCorsOrigins =     { $"{clientsUrl["Spa"]}" },
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "locations",
+                    },
+                },
             };
         }
     }

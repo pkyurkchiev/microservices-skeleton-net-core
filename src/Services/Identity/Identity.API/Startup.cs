@@ -81,6 +81,8 @@ namespace Identity.API
                     });
             });
 
+            services.AddTransient<ILoginService<User>, LoginService>();
+
             // Add framework services.
             services.AddSwaggerGen(options =>
             {

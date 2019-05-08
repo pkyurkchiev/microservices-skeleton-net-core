@@ -5,7 +5,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80      
-      - SpaClient=http://localhost:5100
+      - SpaClient=http://localhost:5111
       - ConnectionString=${Skeleton_AZURE_IDENTITY_DB:-Server=sql.data;Database=SkeletonOnContainers.Services.IdentityDb;User Id=sa;Password=Pass@word}
       - IdentityUrlExternal=http://localhost:5101
       - LocationApiClient=http://localhost:5102

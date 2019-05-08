@@ -10,6 +10,9 @@ import { ConfigurationService } from './services/configuration.service';
 import { StorageService } from './services/storage.service';
 import { SecurityService } from './services/security.service';
 
+// Components
+import { Identity } from '../components/identity/identity';
+
 @NgModule({
     imports: [
         CommonModule,
@@ -23,7 +26,7 @@ import { SecurityService } from './services/security.service';
     declarations: [
         //Pager,
         //Header,
-        //Identity,
+        Identity,
         //PageNotFoundComponent,
         //UppercasePipe
     ],
@@ -37,7 +40,7 @@ import { SecurityService } from './services/security.service';
         // Providers, Components, directive, pipes
         //Pager,
         //Header,
-        //Identity,
+        Identity,
         //PageNotFoundComponent,
         //UppercasePipe
     ]
