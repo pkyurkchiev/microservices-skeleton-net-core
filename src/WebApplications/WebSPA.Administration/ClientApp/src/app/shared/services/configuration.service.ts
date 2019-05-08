@@ -17,13 +17,13 @@ export class ConfigurationService {
 
   load() {
     const baseURI = document.baseURI.endsWith('/') ? document.baseURI : `${document.baseURI}/`;
-    let url = `${baseURI}Home/Configuration`;
+    let url = `${baseURI}api/Configurations/Main`;
     this.http.get(url).subscribe((response) => {
       console.log('server settings loaded');
       this.serverSettings = response as IConfiguration;
       console.log(this.serverSettings);
       this.storageService.store('identityUrl', this.serverSettings.identityUrl);
-      this.storageService.store('locationsUrl', this.serverSettings.locationUrl);
+      this.storageService.store('locationsUrl', this.serverSettings.locationsUrl);
       this.isReady = true;
       this.settingsLoadedSource.next();
     });

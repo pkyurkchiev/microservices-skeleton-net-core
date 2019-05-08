@@ -1,4 +1,4 @@
 export interface IConfiguration {
     identityUrl: string,
-    locationUrl: string
+    locationsUrl: string
 }
