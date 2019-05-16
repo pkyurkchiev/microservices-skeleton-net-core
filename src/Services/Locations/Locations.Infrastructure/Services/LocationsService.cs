@@ -48,7 +48,7 @@ namespace Locations.Infrastructure.Services
             }
 
             // If current area found, then update user location
-            var locationAncestors = new List<string>();
+            //var locationAncestors = new List<string>();
             var userLocation = await _locationsRepository.GetUserLocationAsync(userId);
             userLocation = userLocation ?? new UserLocation();
             userLocation.UserId = userId;

@@ -1,15 +1,14 @@
 ﻿using Identity.API.Data.Entities;
+using Identity.API.Services;
 using Identity.API.ViewModels.AccountViewModels;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Identity.API.Services;
 
 namespace Identity.API.Controllers
 {

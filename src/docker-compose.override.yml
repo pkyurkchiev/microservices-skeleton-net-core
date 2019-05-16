@@ -21,16 +21,31 @@ services:
       - IdentityUrlExternal=http://10.0.75.1:5101
       - EventBusConnection=${Skeleton_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${Skeleton_SERVICE_BUS_USERNAME}
-      - EventBusPassword=${Skeleton_SERVICE_BUS_PASSWORD} 
+      - EventBusPassword=${Skeleton_SERVICE_BUS_PASSWORD}
     ports:
       - "5102:80"
-      
+
+  knowledgebase.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${Skeleton_AZURE_IDENTITY_DB:-Server=sql.data;Database=SkeletonOnContainers.Services.KnowledgeBaseDb;User Id=sa;Password=Pass@word}
+      - Database=LocationsDb
+      - IdentityUrlExternal=http://10.0.75.1:5101
+      - EventBusConnection=${Skeleton_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${Skeleton_SERVICE_BUS_USERNAME}
+      - EventBusPassword=${Skeleton_SERVICE_BUS_PASSWORD}
+    ports:
+      - "5103:80"
+
   status.web:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - IdentityUrl=http://identity.api/hc
       - LocationsUrl=http://locations.api/hc
+      - KnowledgeBaseUrl=http://knowledgebase.api/hc
+      - AdministrationSPAUrl=http://webspa.administration
     ports:
       - "5110:80"
       

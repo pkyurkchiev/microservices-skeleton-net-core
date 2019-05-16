@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.HealthChecks;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
@@ -36,23 +38,9 @@ namespace Locations.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
-
-            //services.AddDbContext<LocationsContext>(options =>
-            //{
-            //    options.UseSqlServer(Configuration["ConnectionString"],
-            //                         sqlServerOptionsAction: sqlOptions =>
-            //                         {
-            //                             sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
-            //                             //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency 
-            //                             sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-            //                         });
-
-            //    // Changing default behavior when client evaluation occurs to throw. 
-            //    // Default in EF Core would be to log a warning when client evaluation is performed.
-            //    options.ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning));
-            //    //Check Client vs. Server evaluation: https://docs.microsoft.com/en-us/ef/core/querying/client-eval
-            //});
+            services
+                .AddCustomHealthCheck(Configuration)
+                .AddMvc();
 
             ConfigureAuthService(services);
 
@@ -84,12 +72,6 @@ namespace Locations.API
                 }
 
                 return new DefaultRabbitMQPersistentConnection(factory, logger, retryCount);
-            });
-
-            services.AddHealthChecks(checks =>
-            {
-                checks.AddValueTaskCheck("HTTP Endpoint", () => new
-                    ValueTask<IHealthCheckResult>(HealthCheckResult.Healthy("Ok")));
             });
             
             RegisterEventBus(services);
@@ -149,6 +131,17 @@ namespace Locations.API
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseHealthChecks("/liveness", new HealthCheckOptions
+            {
+                Predicate = r => r.Name.Contains("self")
+            });
+
+            app.UseHealthChecks("/hc", new HealthCheckOptions()
+            {
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
+
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
             app.UseMvcWithDefaultRoute();
@@ -202,6 +195,28 @@ namespace Locations.API
             });
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
+        }
+    }
+
+    public static class CustomExtensionMethods
+    {
+        public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
+        {
+            var hcBuilder = services.AddHealthChecks();
+
+            hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
+
+            hcBuilder.AddMongoDb(mongodbConnectionString: configuration["ConnectionString"],
+                    name: "locations-mongodb-check",
+                    tags: new string[] { "mongodb" });
+
+            //hcBuilder
+            //    .AddRabbitMQ(
+            //        $"amqp://{configuration["EventBusConnection"]}",
+            //        name: "locations-rabbitmqbus-check",
+            //        tags: new string[] { "rabbitmqbus" });
+
+            return services;
         }
     }
 }

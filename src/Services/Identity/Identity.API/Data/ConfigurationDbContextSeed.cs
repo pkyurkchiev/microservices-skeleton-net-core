@@ -17,7 +17,8 @@ namespace Identity.API.Data
             var clientUrls = new Dictionary<string, string>
             {
                 { "Spa", configuration.GetValue<string>("SpaClient") },
-                { "LocationsApi", configuration.GetValue<string>("LocationApiClient") }
+                { "LocationsApi", configuration.GetValue<string>("LocationsApiClient") },
+                { "KnowledgeBaseApi", configuration.GetValue<string>("KnowledgeBaseApiClient") }
             };
 
             if (!context.Clients.Any())

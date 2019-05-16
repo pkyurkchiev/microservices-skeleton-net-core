@@ -1,17 +1,19 @@
-﻿using Identity.API.Data;
+﻿using HealthChecks.UI.Client;
+using Identity.API.Data;
 using Identity.API.Data.Entities;
 using Identity.API.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Reflection;
-using Microsoft.Extensions.HealthChecks;
-using System.Collections.Generic;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Identity.API
 {
@@ -43,15 +45,13 @@ namespace Identity.API
 
             services.AddMvc();
 
-            services.AddHealthChecks(checks =>
-            {
-                var minutes = 1;
-                if (int.TryParse(Configuration["HealthCheck:Timeout"], out var minutesParsed))
-                {
-                    minutes = minutesParsed;
-                }
-                checks.AddSqlCheck("IdentityDb", Configuration["ConnectionString"], TimeSpan.FromMinutes(minutes));
-            });
+            services.AddHealthChecks()
+               .AddCheck("self", () => HealthCheckResult.Healthy())
+               .AddSqlServer(connectionString: Configuration["ConnectionString"],
+                   healthQuery: "SELECT 1;",
+                   name: "identity-mssql-check",
+                   tags: new string[] { "IdentityDB", "db", "sql", "mssql" });
+
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
            
             services.AddIdentityServer(x => x.IssuerUri = "http://10.0.75.1:5101")
@@ -124,6 +124,17 @@ namespace Identity.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseHealthChecks("/hc", new HealthCheckOptions()
+            {
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
+
+            app.UseHealthChecks("/liveness", new HealthCheckOptions
+            {
+                Predicate = r => r.Name.Contains("self")
+            });
 
             app.UseIdentityServer();
             app.UseCors("CorsPolicy");

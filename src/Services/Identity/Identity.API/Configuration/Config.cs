@@ -11,7 +11,8 @@ namespace Identity.API.Configuration
             return new List<ApiResource>
             {
                 //new ApiResource("identity", "Identity Service"),
-                new ApiResource("locations", "Locations Service")
+                new ApiResource("locations", "Locations Service"),
+                new ApiResource("knowledgebase", "KnowledgeBase Service")
             };
         }
 
@@ -35,7 +36,7 @@ namespace Identity.API.Configuration
                     ClientName = "Skeleton",
                     ClientSecrets = { new Secret("secret".Sha256()) },
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                    AllowedCorsOrigins = { $"{clientsUrl["Spa"]}", $"{clientsUrl["LocationsApi"]}" },
+                    AllowedCorsOrigins = { $"{clientsUrl["Spa"]}", $"{clientsUrl["LocationsApi"]}", $"{clientsUrl["KnowledgeBaseApi"]}" },
                     AllowAccessTokensViaBrowser = true,
 
                     AllowedScopes =
