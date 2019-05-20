@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from "@angular/common/http";
-import { IConfiguration } from '../models/configuration.model';
-import { StorageService } from './storage.service';
+import { HttpClient } from "@angular/common/http";
+import { Subject } from 'rxjs';
 
-import { Observable, Subject } from 'rxjs';
+import { IConfiguration } from '../_models/configuration.model';
+import { StorageService } from './storage.service';
 
 @Injectable()
 export class ConfigurationService {

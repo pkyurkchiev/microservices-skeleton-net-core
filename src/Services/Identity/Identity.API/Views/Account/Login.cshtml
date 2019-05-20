@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Http.Authentication
 @model Identity.API.ViewModels.AccountViewModels.LoginViewModel
 
+
 @{
     ViewData["Title"] = "Log in";
 }
@@ -22,12 +23,12 @@
                     <div asp-validation-summary="All" class="text-danger"></div>
                     <div class="form-group">
                         <label asp-for="Email" class="control-label form-label"></label>
-                        <input name="Email" asp-for="Email" class="form-control form-input form-input-center" />
+                        <input asp-for="Email" class="form-control form-input form-input-center" />
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Password" class="control-label form-label"></label>
-                        <input name="Password" asp-for="Password" class="form-control form-input form-input-center" />
+                        <input asp-for="Password" class="form-control form-input form-input-center" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                     <div class="form-group">
@@ -62,4 +63,3 @@
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }
-

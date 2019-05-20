@@ -4,14 +4,20 @@ import { FormsModule, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 //import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { IconsModule } from './icons/icons.module';
 
 // Services
-import { ConfigurationService } from './services/configuration.service';
-import { StorageService } from './services/storage.service';
-import { SecurityService } from './services/security.service';
+import { ConfigurationService } from '../_services/configuration.service';
+import { StorageService } from '../_services/storage.service';
+import { SecurityService } from '../_services/security.service';
+import { AuthGuardService } from '../_services/auth-guard.service';
 
 // Components
-import { Identity } from '../components/identity/identity';
+import { HomeComponent } from '../components/home/home.component';
+import { PageNotFoundComponent } from '../components/page-not-found/page-not-found.component';
+import { NavMenuComponent } from '../components/nav-menu/nav-menu.component';
+
+import { AnnualReportComponent } from '../components/reports/annual-report.component';
 
 @NgModule({
     imports: [
@@ -21,13 +27,16 @@ import { Identity } from '../components/identity/identity';
         RouterModule,
         //NgbModule.forRoot(),
         // No need to export as these modules don't expose any components/directive etc'
-        HttpClientModule
+        HttpClientModule,
+        IconsModule
     ],
     declarations: [
         //Pager,
         //Header,
-        Identity,
-        //PageNotFoundComponent,
+      HomeComponent,
+      PageNotFoundComponent,
+      NavMenuComponent,
+      AnnualReportComponent,
         //UppercasePipe
     ],
     exports: [
@@ -40,8 +49,10 @@ import { Identity } from '../components/identity/identity';
         // Providers, Components, directive, pipes
         //Pager,
         //Header,
-        Identity,
-        //PageNotFoundComponent,
+      HomeComponent,
+      PageNotFoundComponent,
+      NavMenuComponent,
+      AnnualReportComponent,
         //UppercasePipe
     ]
 })
@@ -55,7 +66,8 @@ export class SharedModule {
                 //BasketWrapperService,
                 SecurityService,
                 ConfigurationService,
-                StorageService
+                StorageService,
+                AuthGuardService
                 //SignalrService
             ]
         };

@@ -10,13 +10,10 @@ namespace KnowledgeBase.Data
             : base(options) { }
 
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Test> Tests { get; set; }
         public virtual DbSet<Question> Questions { get; set; }
-        public virtual DbSet<DifficultyLevel> Levels { get; set; }
-        public virtual DbSet<Department> Departments { get; set; }
+        public virtual DbSet<DifficultyLevel> DifficultyLevels { get; set; }
         public virtual DbSet<Answer> Answers { get; set; }
-        public virtual DbSet<Task> Tasks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

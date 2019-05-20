@@ -21,13 +21,12 @@ namespace KnowledgeBase.API.Migrations
 
             modelBuilder.Entity("KnowledgeBase.Data.Entities.Answer", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<int?>("QuestionId");
+                    b.Property<Guid?>("QuestionId");
 
                     b.Property<string>("Text")
                         .HasMaxLength(500);
@@ -39,27 +38,10 @@ namespace KnowledgeBase.API.Migrations
                     b.ToTable("Answers");
                 });
 
-            modelBuilder.Entity("KnowledgeBase.Data.Entities.Department", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(150);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Departments");
-                });
-
             modelBuilder.Entity("KnowledgeBase.Data.Entities.DifficultyLevel", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<bool>("IsDeleted");
 
@@ -68,24 +50,19 @@ namespace KnowledgeBase.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Levels");
+                    b.ToTable("DifficultyLevels");
                 });
 
             modelBuilder.Entity("KnowledgeBase.Data.Entities.Question", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<int>("CorrectAnswerId");
+                    b.Property<Guid>("CorrectAnswerId");
 
-                    b.Property<int>("DepartmentId");
-
-                    b.Property<int?>("DifficultyLevelId");
+                    b.Property<Guid>("DifficultyLevelId");
 
                     b.Property<bool>("IsDeleted");
-
-                    b.Property<int>("LevelId");
 
                     b.Property<string>("Text")
                         .HasMaxLength(500);
@@ -94,75 +71,27 @@ namespace KnowledgeBase.API.Migrations
 
                     b.HasIndex("CorrectAnswerId");
 
-                    b.HasIndex("DepartmentId");
-
                     b.HasIndex("DifficultyLevelId");
 
                     b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("KnowledgeBase.Data.Entities.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(250);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("KnowledgeBase.Data.Entities.Task", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("DepartmentId");
-
-                    b.Property<string>("Description");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<int>("LevelId");
-
-                    b.Property<string>("Title");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.HasIndex("LevelId");
-
-                    b.ToTable("Tasks");
-                });
-
             modelBuilder.Entity("KnowledgeBase.Data.Entities.Test", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Comments");
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<int?>("QuestionId");
+                    b.Property<Guid?>("QuestionId");
 
-                    b.Property<int?>("TaskId");
-
-                    b.Property<int?>("UserId");
+                    b.Property<Guid?>("UserId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("QuestionId");
-
-                    b.HasIndex("TaskId");
 
                     b.HasIndex("UserId");
 
@@ -171,32 +100,16 @@ namespace KnowledgeBase.API.Migrations
 
             modelBuilder.Entity("KnowledgeBase.Data.Entities.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<string>("City")
-                        .HasMaxLength(150);
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(150);
-
-                    b.Property<string>("FirstName")
-                        .HasMaxLength(250);
+                    b.Property<string>("ExternalId")
+                        .IsRequired()
+                        .HasMaxLength(15);
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<string>("LastName")
-                        .HasMaxLength(250);
-
-                    b.Property<string>("PhoneNumber")
-                        .HasMaxLength(50);
-
-                    b.Property<int>("RoleId");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
                 });
@@ -215,26 +128,9 @@ namespace KnowledgeBase.API.Migrations
                         .HasForeignKey("CorrectAnswerId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("KnowledgeBase.Data.Entities.Department", "Department")
-                        .WithMany("Questions")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("KnowledgeBase.Data.Entities.DifficultyLevel", "DifficultyLevel")
                         .WithMany("Questions")
-                        .HasForeignKey("DifficultyLevelId");
-                });
-
-            modelBuilder.Entity("KnowledgeBase.Data.Entities.Task", b =>
-                {
-                    b.HasOne("KnowledgeBase.Data.Entities.Department", "Department")
-                        .WithMany("Tasks")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("KnowledgeBase.Data.Entities.DifficultyLevel", "Level")
-                        .WithMany("Tasks")
-                        .HasForeignKey("LevelId")
+                        .HasForeignKey("DifficultyLevelId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -244,21 +140,9 @@ namespace KnowledgeBase.API.Migrations
                         .WithMany("Tests")
                         .HasForeignKey("QuestionId");
 
-                    b.HasOne("KnowledgeBase.Data.Entities.Task")
-                        .WithMany("Tests")
-                        .HasForeignKey("TaskId");
-
                     b.HasOne("KnowledgeBase.Data.Entities.User")
                         .WithMany("Tests")
                         .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("KnowledgeBase.Data.Entities.User", b =>
-                {
-                    b.HasOne("KnowledgeBase.Data.Entities.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

@@ -6,6 +6,7 @@ RUN apt-get update -qq && \
     wget -qO- https://deb.nodesource.com/setup_10.x | bash - && \
     apt-get install -qq -y build-essential nodejs && \
     apt-get install -qq -y nginx
+RUN	npm install -g @angular/cli
 # End setup
 WORKDIR /app
 EXPOSE 80
@@ -16,9 +17,10 @@ FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 RUN apt-get update -qq && \
     apt-get install -qq -y wget && \
     apt-get install -qq -y gnupg2 && \
-    wget -qO- https://deb.nodesource.com/setup_8.x | bash - && \
+    wget -qO- https://deb.nodesource.com/setup_10.x | bash - && \
     apt-get install -qq -y build-essential nodejs && \
     apt-get install -qq -y nginx
+RUN	npm install -g @angular/cli
 # End setup
 WORKDIR /src
 COPY *.sln ./

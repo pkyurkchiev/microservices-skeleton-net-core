@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { SecurityService } from './shared/services/security.service';
-import { ConfigurationService } from './shared/services/configuration.service';
+import { SecurityService } from './_services/security.service';
+import { ConfigurationService } from './_services/configuration.service';
 
 @Component({
   selector: 'app-root',
@@ -10,22 +10,55 @@ import { ConfigurationService } from './shared/services/configuration.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'ClientApp';
+  title = 'Sekeleton administration';
 
-  Authenticated: boolean = false;
+  authenticated: boolean = false;
   subscription: Subscription;
 
-  constructor(private securityService: SecurityService, 
+  constructor(private service: SecurityService, 
     private configurationService: ConfigurationService) {
-    this.Authenticated = this.securityService.IsAuthorized;
+    this.authenticated = this.service.IsAuthorized;
   }
 
   ngOnInit() {
     console.log('app on init');
-    this.subscription = this.securityService.authenticationChallenge$.subscribe(res => this.Authenticated = res);
+    this.subscription = this.service.authenticationChallenge$.subscribe(res => this.authenticated = res);
 
     //Get configuration from server environment variables:
     console.log('configuration');
     this.configurationService.load();
-  }
+    
+      this.subscription = this.service.authenticationChallenge$.subscribe(res => {
+        this.authenticated = res;
+       // this.userName = this.service.UserData.email;
+      });
+
+    if (window.location.hash) {
+      console.log(1);
+        this.service.AuthorizedCallback();
+      }
+
+      console.log('identity component, checking authorized' + this.service.IsAuthorized);
+      this.authenticated = this.service.IsAuthorized;
+
+      //if (this.authenticated) {
+      //  if (this.service.UserData)
+      //    this.userName = this.service.UserData.email;
+      //}
+    }
+
+    logoutClicked(event: any) {
+      event.preventDefault();
+      console.log('Logout clicked');
+      this.logout();
+    }
+
+    login() {
+      this.service.Authorize();
+    }
+
+    logout() {
+      //this.signalrService.stop();
+      this.service.Logoff();
+    }
 }

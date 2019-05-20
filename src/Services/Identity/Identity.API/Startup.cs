@@ -123,6 +123,11 @@ namespace Identity.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
             }
 
             app.UseHealthChecks("/hc", new HealthCheckOptions()

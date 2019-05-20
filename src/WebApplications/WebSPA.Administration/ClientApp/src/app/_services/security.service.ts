@@ -19,13 +19,13 @@ export class SecurityService {
 
   constructor(private _http: HttpClient, private _router: Router, private route: ActivatedRoute, private _configurationService: ConfigurationService, private _storageService: StorageService) {
     this.headers = new HttpHeaders();
-    this.headers.append('Content-Type', 'application/json');
-    this.headers.append('Accept', 'application/json');
+    this.headers = this.headers.set('Content-Type', 'application/json');
+    this.headers = this.headers.set('Accept', 'application/json');
     this.storage = _storageService;
 
     this._configurationService.settingsLoaded$.subscribe(x => {
       this.authorityUrl = this._configurationService.serverSettings.identityUrl
-      this.storage.store('IdentityUrl', this.authorityUrl);
+      this.storage.store('identityUrl', this.authorityUrl);
     });
 
     if (this.storage.retrieve('IsAuthorized') !== '') {
@@ -221,8 +221,11 @@ export class SecurityService {
   private getUserData = (): Observable<string[]> => {
     this.setHeaders();
     if (this.authorityUrl === '')
-      this.authorityUrl = this.storage.retrieve('IdentityUrl');
-
+      this.authorityUrl = this.storage.retrieve('identityUrl');
+    console.log(this.headers.get('Authorization'));
+    console.log(this.headers.has('Authorization'));
+    console.log(this.headers.keys.length);    
+    console.log('---');
     return this._http.get<string[]>(this.authorityUrl + '/connect/userinfo', {
       headers: this.headers//,
       //params: ''
@@ -231,13 +234,13 @@ export class SecurityService {
 
   private setHeaders() {
     this.headers = new HttpHeaders();
-    this.headers.append('Content-Type', 'application/json');
-    this.headers.append('Accept', 'application/json');
+    this.headers = this.headers.set('Content-Type', 'application/json');
+    this.headers = this.headers.set('Accept', 'application/json');
 
     let token = this.GetToken();
-
+    
     if (token !== '') {
-      this.headers.append('Authorization', 'Bearer ' + token);
+      this.headers = this.headers.set('Authorization', 'Bearer ' + token);
     }
   }
 }

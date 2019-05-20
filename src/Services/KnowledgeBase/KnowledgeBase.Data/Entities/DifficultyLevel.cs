@@ -12,7 +12,6 @@ namespace KnowledgeBase.Data.Entities
 
 
         public virtual ICollection<Question> Questions { get; set; }
-        public virtual ICollection<Task> Tasks { get; set; }
 
         #endregion
 
@@ -21,7 +20,6 @@ namespace KnowledgeBase.Data.Entities
         public DifficultyLevel()
         {
             this.Questions = new HashSet<Question>();
-            this.Tasks = new HashSet<Task>();
         }
 
         #endregion

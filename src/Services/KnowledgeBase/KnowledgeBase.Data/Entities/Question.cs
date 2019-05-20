@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+    using System;
 
     public class Question : BaseEntity
     {
@@ -12,12 +12,9 @@
         public string Text { get; set; }
 
         //[Index(IsUnique = true)]
-        public int CorrectAnswerId { get; set; }
+        public Guid CorrectAnswerId { get; set; }
 
-        public int LevelId { get; set; }
-        public int DepartmentId { get; set; }
-
-        public virtual Department Department { get; set; }
+        public Guid DifficultyLevelId { get; set; }
         public virtual DifficultyLevel DifficultyLevel { get; set; }
 
         public virtual Answer CorrectAnswer { get; set; }

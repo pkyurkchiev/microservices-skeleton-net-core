@@ -34,15 +34,7 @@ namespace KnowledgeBase.Infrastructure.Repository
             }
         }
 
-        public IRepository<Department> Departments
-        {
-            get
-            {
-                return this.GetRepository<Department>();
-            }
-        }
-
-        public IRepository<DifficultyLevel> Levels
+        public IRepository<DifficultyLevel> DifficultyLevels
         {
             get
             {
@@ -55,14 +47,6 @@ namespace KnowledgeBase.Infrastructure.Repository
             get
             {
                 return this.GetRepository<Question>();
-            }
-        }
-
-        public IRepository<Role> Roles
-        {
-            get
-            {
-                return this.GetRepository<Role>();
             }
         }
 
@@ -79,14 +63,6 @@ namespace KnowledgeBase.Infrastructure.Repository
             get
             {
                 return this.GetRepository<User>();
-            }
-        }
-
-        public IRepository<Task> Tasks
-        {
-            get
-            {
-                return this.GetRepository<Task>();
             }
         }
 

@@ -2,11 +2,12 @@
 {
     using System.ComponentModel.DataAnnotations;
     using Interfaces;
+    using System;
 
     public abstract class BaseEntity : ISoftDelete
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public bool IsDeleted { get; set; }
     }

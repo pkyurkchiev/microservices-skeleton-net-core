@@ -7,25 +7,9 @@ namespace KnowledgeBase.Data.Entities
     {
         #region Properties
 
-        [StringLength(250)]
-        public string FirstName { get; set; }
-
-        [StringLength(250)]
-        public string LastName { get; set; }
-
-        [StringLength(150)]
-        public string City { get; set; }
-
-        [EmailAddress]
-        [StringLength(150)]
-        public string Email { get; set; }
-
-        [StringLength(50)]
-        public string PhoneNumber { get; set; }
-
-        public virtual Role Role { get; set; }
-
-        public int RoleId { get; set; }
+        [Required]
+        [StringLength(15)]
+        public string ExternalId { get; set; }
 
         public virtual ICollection<Test> Tests { get; set; }
         #endregion
