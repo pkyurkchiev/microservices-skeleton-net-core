@@ -11,12 +11,12 @@
   </ul>
 </nav>
 
-<div class="container-fluid">
+<div class="container-fluid" *ngIf="authenticated">
   <div class="row">
-    <app-nav-menu *ngIf="authenticated"></app-nav-menu>
+    <app-nav-menu></app-nav-menu>
 
-    <section class="col-lg-4 col-md-5 col-12">
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
       <router-outlet></router-outlet>
-    </section>
-    </div>
+    </main>
+  </div>
 </div>

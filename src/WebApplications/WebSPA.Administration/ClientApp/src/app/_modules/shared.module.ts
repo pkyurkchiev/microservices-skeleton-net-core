@@ -7,6 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { IconsModule } from './icons/icons.module';
 
 // Services
+import { DataService } from '../_services/data.service';
 import { ConfigurationService } from '../_services/configuration.service';
 import { StorageService } from '../_services/storage.service';
 import { SecurityService } from '../_services/security.service';
@@ -16,7 +17,6 @@ import { AuthGuardService } from '../_services/auth-guard.service';
 import { HomeComponent } from '../components/home/home.component';
 import { PageNotFoundComponent } from '../components/page-not-found/page-not-found.component';
 import { NavMenuComponent } from '../components/nav-menu/nav-menu.component';
-
 import { AnnualReportComponent } from '../components/reports/annual-report.component';
 
 @NgModule({
@@ -61,14 +61,11 @@ export class SharedModule {
         return {
             ngModule: SharedModule,
             providers: [
-                // Providers
-                //DataService,
-                //BasketWrapperService,
+                DataService,
                 SecurityService,
                 ConfigurationService,
                 StorageService,
                 AuthGuardService
-                //SignalrService
             ]
         };
     }

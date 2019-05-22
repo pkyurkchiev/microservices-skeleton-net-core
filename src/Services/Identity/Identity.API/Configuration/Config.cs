@@ -36,7 +36,7 @@ namespace Identity.API.Configuration
                     ClientName = "Skeleton",
                     ClientSecrets = { new Secret("secret".Sha256()) },
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                    AllowedCorsOrigins = { $"{clientsUrl["Spa"]}", $"{clientsUrl["LocationsApi"]}", $"{clientsUrl["KnowledgeBaseApi"]}" },
+                    AllowedCorsOrigins = { $"{clientsUrl["Spa"]}", /*$"{clientsUrl["IdentityApi"]}",*/ $"{clientsUrl["LocationsApi"]}", $"{clientsUrl["KnowledgeBaseApi"]}" },
                     AllowAccessTokensViaBrowser = true,
 
                     AllowedScopes =
@@ -61,6 +61,7 @@ namespace Identity.API.Configuration
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         "locations",
+                        //"identity"
                     },
                 },
             };

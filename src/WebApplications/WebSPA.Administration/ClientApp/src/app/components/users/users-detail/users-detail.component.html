@@ -1,0 +1,26 @@
+<div class="esh-orders_new-header">
+  <div class="container">
+    <a class="esh-orders_new-back" routerLink="/users">Back to list of users</a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="alert alert-warning esh-orders_new-alert" role="alert" [hidden]="!errorReceived">
+    Not possible to create a new user, please try later on
+  </div>
+  <section class="esh-orders_detail-section">
+    <article class="esh-orders_detail-titles row">
+      <section class="esh-orders_detail-title col-3">#</section>
+      <section class="esh-orders_detail-title col-3">First name</section>
+      <section class="esh-orders_detail-title col-3">Last name</section>
+      <section class="esh-orders_detail-title col-3">Username</section>
+    </article>
+
+    <article class="esh-orders_detail-items row">
+      <section class="esh-orders_detail-item col-3">{{user.id}}</section>
+      <section class="esh-orders_detail-item col-3">{{user.firstName}}</section>
+      <section class="esh-orders_detail-item col-3">{{user.lastName}}</section>
+      <section class="esh-orders_detail-item col-3">{{user.userName}}</section>
+    </article>
+  </section>
+</div>

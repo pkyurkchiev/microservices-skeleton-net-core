@@ -33,6 +33,17 @@ namespace Identity.API.Data
 
                     await context.SaveChangesAsync();
                 }
+
+                if (!context.UserRoles.Any())
+                {
+                    Role role = context.Roles.FirstOrDefault(x => x.Name == "Admin");
+                    foreach (User user in context.Users)
+                    {
+                        context.UserRoles.AddRange(new IdentityUserRole<Guid> { UserId = user.Id, RoleId = role.Id });
+                    }
+
+                    await context.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -49,8 +60,7 @@ namespace Identity.API.Data
 
         private IEnumerable<User> GetDefaultUser()
         {
-            var user =
-            new User()
+            User user = new User()
             {
                 Email = "demouser@microsoft.com",
                 Id = Guid.NewGuid(),
@@ -73,15 +83,21 @@ namespace Identity.API.Data
 
         private IEnumerable<Role> GetDefaultRole()
         {
-            var role = new Role()
+            Role adminRole = new Role()
             {
                 Name = "Admin",
-                NormalizedName = "Admin"
+                NormalizedName = "ADMIN"
+            };
+            Role userRole = new Role()
+            {
+                Name = "User",
+                NormalizedName = "USER"
             };
 
             return new List<Role>()
             {
-                role
+                adminRole,
+                userRole
             };
         }
     }

@@ -1,5 +1,5 @@
 ﻿using Identity.API.Data.Entities;
-using Identity.API.ViewModels.Roles;
+using Identity.API.Messages.Role;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +21,7 @@ namespace Identity.API.Controllers
 
         // POST: api/Roles
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] RoleVM model)
+        public async Task<IActionResult> Post([FromBody] RoleRequestMessage model)
         {
             if (model == null)
             {

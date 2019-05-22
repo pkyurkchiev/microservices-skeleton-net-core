@@ -1,0 +1,63 @@
+<div class="esh-orders_new-header">
+  <div class="container">
+    <a class="esh-orders_new-back" routerLink="/users">Back to list of users</a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="alert alert-warning esh-orders_new-alert" role="alert" [hidden]="!errorReceived">
+    Not possible to create a new user, please try later on
+  </div>
+  <form [formGroup]="newUserForm" (ngSubmit)="submitForm(newUserForm.value)">
+    <section class="esh-orders_new-section">
+      <h4 class="esh-orders_new-title">User</h4>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group" [ngClass]="{'has-error':!newUserForm.controls['firstName'].valid && newUserForm.controls['firstName'].touched}">
+            <label class="esh-orders_new-title">First name</label>
+            <input class="form-control form-input" type="text" placeholder="First name" [formControl]="newUserForm.controls['firstName']">
+            <div *ngIf="newUserForm.controls['firstName'].hasError('required') && newUserForm.controls['firstName'].touched" class="alert alert-danger">Required field.</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group" [ngClass]="{'has-error':!newUserForm.controls['lastName'].valid && newUserForm.controls['lastName'].touched}">
+            <label class="esh-orders_new-title">Last name</label>
+            <input class="form-control form-input" type="text" placeholder="Last name" [formControl]="newUserForm.controls['lastName']">
+            <div *ngIf="newUserForm.controls['lastName'].hasError('required') && newUserForm.controls['lastName'].touched" class="alert alert-danger">Required field.</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group" [ngClass]="{'has-error':!newUserForm.controls['userName'].valid && newUserForm.controls['userName'].touched}">
+            <label class="esh-orders_new-title">Username</label>
+            <input class="form-control form-input" type="text" placeholder="Username" [formControl]="newUserForm.controls['userName']">
+            <div *ngIf="newUserForm.controls['userName'].hasError('required') && newUserForm.controls['userName'].touched" class="alert alert-danger">Required field.</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group" [ngClass]="{'has-error':!newUserForm.controls['email'].valid && newUserForm.controls['email'].touched}">
+            <label class="esh-orders_new-title">Email</label>
+            <input class="form-control form-input" type="email" placeholder="Email" [formControl]="newUserForm.controls['email']">
+            <div *ngIf="newUserForm.controls['email'].hasError('required') && newUserForm.controls['email'].touched" class="alert alert-danger">Required field.</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group" [ngClass]="{'has-error':!newUserForm.controls['password'].valid && newUserForm.controls['password'].touched}">
+            <label class="esh-orders_new-title">Password</label>
+            <input class="form-control form-input" type="password" placeholder="Password" [formControl]="newUserForm.controls['password']">
+            <div *ngIf="newUserForm.controls['password'].hasError('required') && newUserForm.controls['password'].touched" class="alert alert-danger">Required field.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="esh-orders_new-section">
+      <div class="form-group row">
+        <div class="col-md-9">
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn esh-orders_new-placeOrder" [disabled]="!newUserForm.valid || isUserProcessing">[ Save user ]</button>
+        </div>
+      </div>
+    </section>
+  </form>
+</div>

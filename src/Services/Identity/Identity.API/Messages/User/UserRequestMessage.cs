@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Identity.API.ViewModels.Users
+namespace Identity.API.Messages.User
 {
-    public class UserVM
+    public class UserRequestMessage
     {
         [Required]
         public string UserName { get; set; }
@@ -14,5 +14,6 @@ namespace Identity.API.ViewModels.Users
         public string LastName { get; set; }
         [Required]
         public string Email { get; set; }
+        
     }
 }

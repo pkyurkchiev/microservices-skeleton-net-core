@@ -10,14 +10,12 @@ import { ConfigurationService } from './_services/configuration.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'Sekeleton administration';
-
   authenticated: boolean = false;
   subscription: Subscription;
 
   constructor(private service: SecurityService, 
     private configurationService: ConfigurationService) {
-    this.authenticated = this.service.IsAuthorized;
+      this.authenticated = this.service.IsAuthorized;
   }
 
   ngOnInit() {
@@ -34,7 +32,6 @@ export class AppComponent {
       });
 
     if (window.location.hash) {
-      console.log(1);
         this.service.AuthorizedCallback();
       }
 
@@ -45,20 +42,20 @@ export class AppComponent {
       //  if (this.service.UserData)
       //    this.userName = this.service.UserData.email;
       //}
-    }
+  }
 
-    logoutClicked(event: any) {
-      event.preventDefault();
-      console.log('Logout clicked');
-      this.logout();
-    }
+  logoutClicked(event: any) {
+    event.preventDefault();
+    console.log('Logout clicked');
+    this.logout();
+  }
 
-    login() {
-      this.service.Authorize();
-    }
+  login() {
+    this.service.Authorize();
+  }
 
-    logout() {
-      //this.signalrService.stop();
-      this.service.Logoff();
-    }
+  logout() {
+    //this.signalrService.stop();
+    this.service.Logoff();
+  }
 }
