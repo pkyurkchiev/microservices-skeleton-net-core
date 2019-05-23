@@ -17,7 +17,6 @@ import { AuthGuardService } from '../_services/auth-guard.service';
 import { HomeComponent } from '../components/home/home.component';
 import { PageNotFoundComponent } from '../components/page-not-found/page-not-found.component';
 import { NavMenuComponent } from '../components/nav-menu/nav-menu.component';
-import { AnnualReportComponent } from '../components/reports/annual-report.component';
 
 @NgModule({
     imports: [
@@ -36,7 +35,6 @@ import { AnnualReportComponent } from '../components/reports/annual-report.compo
       HomeComponent,
       PageNotFoundComponent,
       NavMenuComponent,
-      AnnualReportComponent,
         //UppercasePipe
     ],
     exports: [
@@ -52,7 +50,6 @@ import { AnnualReportComponent } from '../components/reports/annual-report.compo
       HomeComponent,
       PageNotFoundComponent,
       NavMenuComponent,
-      AnnualReportComponent,
         //UppercasePipe
     ]
 })

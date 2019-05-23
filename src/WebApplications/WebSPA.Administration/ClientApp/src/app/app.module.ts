@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 
 import { SharedModule } from './_modules/shared.module';
 import { UsersModule } from './components/users/users.module';
+import { ReportsModule } from './components/reports/reports.module';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { UsersModule } from './components/users/users.module';
     HttpClientModule,
     // Only module that app module loads
     SharedModule.forRoot(),
-    UsersModule
+    UsersModule,
+    ReportsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

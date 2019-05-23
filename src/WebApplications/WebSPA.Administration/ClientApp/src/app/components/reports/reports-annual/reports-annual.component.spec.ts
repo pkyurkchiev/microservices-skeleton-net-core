@@ -1,11 +1,11 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async } from '@angular/core/testing';
-import { AnnualReportComponent } from './annual-report.component';
+import { ReportsAnnualComponent } from './reports-annual.component';
 
-describe('Component: AnnualReport', () => {
+describe('Component: ReportsAnnual', () => {
   it('should create an instance', () => {
-    let component = new AnnualReportComponent();
+    let component = new ReportsAnnualComponent();
     expect(component).toBeTruthy();
   });
 });
