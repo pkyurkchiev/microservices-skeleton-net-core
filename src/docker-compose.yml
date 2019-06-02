@@ -54,5 +54,35 @@ services:
   nosql.data:
     image: mongo
 
+  elasticsearch.data:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
+    container_name: elasticsearch.data
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - esnet
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.1.1
+    depends_on:
+      - elasticsearch.data
+    networks:
+      - esnet
+
   rabbitmq:
     image: rabbitmq:3.7-management
+
+volumes:
+  elasticsearch-data:
+
+networks:
+  esnet:
+    driver: bridge

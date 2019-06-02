@@ -77,6 +77,15 @@ services:
     ports:
       - "27017:27017"
 
+  elasticsearch.data:
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  kibana:
+    ports:
+      - "5601:5601"
+
   rabbitmq:
     ports:
       - "15672:15672"  # Important: Remove on production environment
