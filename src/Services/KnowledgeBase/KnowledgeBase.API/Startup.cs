@@ -20,8 +20,10 @@ namespace KnowledgeBase.API
 {
     using EventBusRabbitMQ;
     using HealthChecks.UI.Client;
+    using KnowledgeBase.Infrastructure;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
+    using Microsoft.OpenApi.Models;
     using RabbitMQ.Client;
 
     public class Startup
@@ -46,7 +48,7 @@ namespace KnowledgeBase.API
                                          sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
                                      }));
 
-            services.AddMvc();//.SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllers();//.SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddCustomHealthCheck(Configuration);
 
@@ -87,23 +89,25 @@ namespace KnowledgeBase.API
             // Add framework services.
             services.AddSwaggerGen(options =>
             {
-                options.DescribeAllEnumsAsStrings();
-                options.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
+                //options.DescribeAllEnumsAsStrings();
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
                     Title = "SkeletonOnContainers - KnowledgeBase HTTP API",
                     Version = "v1",
                     Description = "The KnowledgeBase Microservice HTTP API. This is a Data-Driven/CRUD microservice sample",
-                    TermsOfService = "Terms Of Service"
+                    //TermsOfService = "Terms Of Service"
                 });
 
-                options.AddSecurityDefinition("oauth2", new OAuth2Scheme
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
-                    Type = "oauth2",
-                    Flow = "password",
-                    TokenUrl = $"{Configuration.GetValue<string>("IdentityUrlExternal")}/connect/token",
-                    Scopes = new Dictionary<string, string>()
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows
                     {
-                        { "locations", "Locations API" }
+                        Password = new OpenApiOAuthFlow
+                        {
+                            TokenUrl = new Uri($"{Configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
+                            Scopes = new Dictionary<string, string>() { { "locations", "Locations API" } }
+                        }
                     }
                 });
             });
@@ -114,7 +118,8 @@ namespace KnowledgeBase.API
                     builder => builder.AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    .AllowCredentials());
+                    //.AllowCredentials()
+                    );
             });
 
             // autofac
@@ -149,9 +154,13 @@ namespace KnowledgeBase.API
                 Predicate = r => r.Name.Contains("self")
             });
 
+            app.UseRouting();
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
-            app.UseMvcWithDefaultRoute();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+            });
 
             app.UseSwagger()
               .UseSwaggerUI(c =>

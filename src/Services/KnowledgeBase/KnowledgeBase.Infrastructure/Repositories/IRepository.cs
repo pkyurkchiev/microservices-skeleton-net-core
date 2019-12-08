@@ -1,31 +1,33 @@
 ﻿using KnowledgeBase.Data.Entities.Enums;
 using KnowledgeBase.Data.Entities.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
-namespace KnowledgeBase.Infrastructure.Repository
+namespace KnowledgeBase.Infrastructure.Repositories
 {
     public interface IRepository<T> where T : class , ISoftDelete
     {
-        IQueryable<T> GetAll(DeleteStatus DeleteStatus = DeleteStatus.NotDeleted);
+        Task<IList<T>> GetAll(DeleteStatus DeleteStatus = DeleteStatus.NotDeleted);
 
-        T GetById(object id, DeleteStatus DeleteStatus = DeleteStatus.NotDeleted);
+        Task<T> GetById(object id, DeleteStatus DeleteStatus = DeleteStatus.NotDeleted);
 
-        void Insert(T entity);
+        Task Insert(T entity);
 
         void Update(T entity);
 
         void Delete(T entity);
 
-        void Delete(object id);
+        Task Delete(object id);
 
         void Detach(T entity);
 
-        void PermanentDelete(object id);
+        Task PermanentDelete(object id);
 
         void PermanentDelete(T entity);
 
-        IQueryable<T> Find(Expression<Func<T, bool>> where, DeleteStatus DeleteStatus = DeleteStatus.NotDeleted);
+        Task<IList<T>> Find(Expression<Func<T, bool>> where, DeleteStatus DeleteStatus = DeleteStatus.NotDeleted);
     }
 }

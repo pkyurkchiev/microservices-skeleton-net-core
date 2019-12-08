@@ -3,10 +3,12 @@ using KnowledgeBase.Data.Entities.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
-namespace KnowledgeBase.Infrastructure.Repository
+namespace KnowledgeBase.Infrastructure.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class, ISoftDelete
     {
@@ -19,7 +21,6 @@ namespace KnowledgeBase.Infrastructure.Repository
 
         #endregion
 
-
         //To DO Async Methods :)
 
         #region Properties
@@ -28,23 +29,23 @@ namespace KnowledgeBase.Infrastructure.Repository
 
         protected DbContext Context { get; set; }
 
-        public virtual IQueryable<T> GetAll(DeleteStatus deleteStatus = DeleteStatus.NotDeleted)
+        public virtual async Task<IList<T>> GetAll(DeleteStatus deleteStatus = DeleteStatus.NotDeleted)
         {
             var query = this.DbSet.AsQueryable();
 
-            return SoftDeleteQueryFilter(query, deleteStatus);
+            return await SoftDeleteQueryFilter(query, deleteStatus).ToListAsync();
         }
 
         #endregion
 
         #region Methods
 
-        public virtual T GetById(object id, DeleteStatus deleteStatus = DeleteStatus.NotDeleted)
+        public virtual async Task<T> GetById(object id, DeleteStatus deleteStatus = DeleteStatus.NotDeleted)
         {
-            return this.DbSet.Find(id);
+            return await this.DbSet.FindAsync(id);
         }
 
-        public virtual void Insert(T entity)
+        public virtual async Task Insert(T entity)
         {
             EntityEntry entry = this.Context.Entry(entity);
             if (entry.State != EntityState.Detached)
@@ -53,7 +54,7 @@ namespace KnowledgeBase.Infrastructure.Repository
             }
             else
             {
-                this.DbSet.Add(entity);
+                await this.DbSet.AddAsync(entity);
             }
         }
 
@@ -74,9 +75,9 @@ namespace KnowledgeBase.Infrastructure.Repository
             this.Update(entity);
         }
 
-        public virtual void Delete(object id)
+        public virtual async Task Delete(object id)
         {
-            var entity = this.GetById(id);
+            var entity = await this.GetById(id);
 
             if (entity != null)
             {
@@ -99,13 +100,13 @@ namespace KnowledgeBase.Infrastructure.Repository
             }
         }
 
-        public virtual void PermanentDelete(object id)
+        public virtual async Task PermanentDelete(object id)
         {
             var entity = this.GetById(id);
 
             if (entity != null)
             {
-                this.Delete(entity);
+                await this.Delete(entity);
             }
         }
 
@@ -116,10 +117,10 @@ namespace KnowledgeBase.Infrastructure.Repository
             entry.State = EntityState.Detached;
         }
 
-        public virtual IQueryable<T> Find(Expression<Func<T, bool>> where, DeleteStatus deleteStatus = DeleteStatus.NotDeleted)
+        public virtual async Task<IList<T>> Find(Expression<Func<T, bool>> where, DeleteStatus deleteStatus = DeleteStatus.NotDeleted)
         {
             var query = this.DbSet.Where(where);
-            return SoftDeleteQueryFilter(query, deleteStatus);
+            return await SoftDeleteQueryFilter(query, deleteStatus).ToListAsync();
         }
 
         #endregion

@@ -1,12 +1,11 @@
 ﻿using KnowledgeBase.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 
 namespace KnowledgeBase.Data
 {
     public class KnowledgeBaseDbContext : DbContext
     {
-        public KnowledgeBaseDbContext(DbContextOptions<KnowledgeBaseDbContext> options) 
+        public KnowledgeBaseDbContext(DbContextOptions<KnowledgeBaseDbContext> options)
             : base(options) { }
 
         public virtual DbSet<User> Users { get; set; }
@@ -15,20 +14,11 @@ namespace KnowledgeBase.Data
         public virtual DbSet<DifficultyLevel> DifficultyLevels { get; set; }
         public virtual DbSet<Answer> Answers { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //base.OnModelCreating(builder);
+            //modelBuilder.Entity<Question>()
+            //           .HasIndex(q => q.CorrectAnswer)
+            //           .IsUnique();
         }
     }
-
-    //public class KnowledgeBaseContextDesignFactory : IDesignTimeDbContextFactory<KnowledgeBaseDbContext>
-    //{
-    //    public KnowledgeBaseDbContext CreateDbContext(string[] args)
-    //    {
-    //        var optionsBuilder = new DbContextOptionsBuilder<KnowledgeBaseDbContext>()
-    //            .UseSqlServer("Server=.;Initial Catalog=SkeletonOnContainers.Services.KnowledgeBaseDb;Integrated Security=true");
-
-    //        return new KnowledgeBaseDbContext(optionsBuilder.Options);
-    //    }
-    //}
 }

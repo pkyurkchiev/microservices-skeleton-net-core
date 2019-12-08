@@ -1,4 +1,4 @@
-﻿namespace KnowledgeBase.Data
+﻿namespace KnowledgeBase.Infrastructure
 {
     public class KnowledgeBaseSettings
     {

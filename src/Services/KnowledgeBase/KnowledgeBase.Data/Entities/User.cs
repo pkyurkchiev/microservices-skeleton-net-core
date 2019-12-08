@@ -7,7 +7,7 @@ namespace KnowledgeBase.Data.Entities
     {
         #region Properties
 
-        [Required]
+        //[Required]
         [StringLength(15)]
         public string ExternalId { get; set; }
 

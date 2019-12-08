@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace KnowledgeBase.Infrastructure.Repository
+namespace KnowledgeBase.Infrastructure.Repositories
 {
     public interface IUnitOfWork : IDisposable
     {
