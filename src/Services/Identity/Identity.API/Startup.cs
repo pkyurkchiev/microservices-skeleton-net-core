@@ -48,7 +48,7 @@ namespace Identity.API
             services.AddHealthChecks()
                .AddCheck("self", () => HealthCheckResult.Healthy())
                .AddSqlServer(connectionString: Configuration["ConnectionString"],
-                   healthQuery: "SELECT 1;",
+                   //healthQuery: "SELECT 1;",
                    name: "identity-mssql-check",
                    tags: new string[] { "IdentityDB", "db", "sql", "mssql" });
 

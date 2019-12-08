@@ -220,7 +220,7 @@ namespace KnowledgeBase.API
             hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
 
             hcBuilder.AddSqlServer(connectionString: configuration["ConnectionString"],
-                   healthQuery: "SELECT 1;",
+                   //healthQuery: "SELECT 1;",
                    name: "Knowledgebase-mssql-check",
                    tags: new string[] { "KnowledgeBaseDB", "db", "sql", "mssql" });
 
