@@ -13,27 +13,19 @@ namespace KnowledgeBase.ApplicationServices.Implementations
 {
     public class TestService : ApplicationServiceBase, ITestService
     {
-        private readonly ITestRepository _testRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public TestService(ITestRepository testRepository)
+        public TestService(IUnitOfWork unitOfWork)
         {
-            _testRepository = testRepository ?? throw new ArgumentNullException("Test repo");
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException("Unit of work");
         }
 
         public async Task<GetTestResponse> GetById(GetTestRequest getTestRequest)
         {
             GetTestResponse result = new GetTestResponse();
 
-            try
-            {
-                Test test = await _testRepository.GetById(getTestRequest.Id);
-                result.Test = test.ConvertToViewModel();
-            }
-            catch (Exception ex)
-            {
-                result.StatusCode = HttpStatusCode.InternalServerError;
-                result.StatusDesciption = ex.Message;
-            }
+            Test test = await _unitOfWork.Tests.GetById(getTestRequest.Id);
+            result.Test = test.ConvertToViewModel();
 
             return result;
         }
