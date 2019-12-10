@@ -7,19 +7,11 @@ namespace KnowledgeBase.Data.Entities
     {
         #region Properties
 
-        //[Required]
+        [Required]
         [StringLength(15)]
         public string ExternalId { get; set; }
 
-        public virtual ICollection<Test> Tests { get; set; }
-        #endregion
-
-        #region Constructors
-
-        public User()
-        {
-            this.Tests = new HashSet<Test>();
-        }
+        public ICollection<UserTest> UserTests { get; set; }
 
         #endregion
     }
