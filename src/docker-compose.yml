@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.6'
 
 services:
   identity.api:
@@ -46,7 +46,6 @@ services:
       dockerfile: WebApplications/WebSPA.Administration/Dockerfile    
     depends_on:
       - identity.api
-      - locations.api
 
   sql.data:
     image: microsoft/mssql-server-linux:2017-latest

@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.6'
 
 services:
   identity.api:
@@ -15,28 +15,22 @@ services:
   locations.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ASPNETCORE_URLS=http://0.0.0.0:5102
       - ConnectionString=${Skeleton_AZURE_COSMOSDB:-mongodb://nosql.data}
       - Database=LocationsDb
       - IdentityUrlExternal=http://10.0.75.1:5101
-      - EventBusConnection=${Skeleton_AZURE_SERVICE_BUS:-rabbitmq}
-      - EventBusUserName=${Skeleton_SERVICE_BUS_USERNAME}
-      - EventBusPassword=${Skeleton_SERVICE_BUS_PASSWORD}
     ports:
-      - "5102:80"
+      - "5102:5102"
 
   knowledgebase.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ASPNETCORE_URLS=http://0.0.0.0:5103
       - ConnectionString=${Skeleton_AZURE_IDENTITY_DB:-Server=sql.data;Database=SkeletonOnContainers.Services.KnowledgeBaseDb;User Id=sa;Password=Pass@word}
       - Database=LocationsDb
       - IdentityUrlExternal=http://10.0.75.1:5101
-      - EventBusConnection=${Skeleton_AZURE_SERVICE_BUS:-rabbitmq}
-      - EventBusUserName=${Skeleton_SERVICE_BUS_USERNAME}
-      - EventBusPassword=${Skeleton_SERVICE_BUS_PASSWORD}
     ports:
-      - "5103:80"
+      - "5103:5103"
 
   status.web:
     environment:
