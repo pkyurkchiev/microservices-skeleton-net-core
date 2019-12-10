@@ -9,11 +9,11 @@ namespace KnowledgeBase.Data
         public KnowledgeBaseDbContext(DbContextOptions<KnowledgeBaseDbContext> options)
             : base(options) { }
 
-        public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<Test> Tests { get; set; }
-        public virtual DbSet<Question> Questions { get; set; }
-        public virtual DbSet<DifficultyLevel> DifficultyLevels { get; set; }
-        public virtual DbSet<Answer> Answers { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Test> Tests { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<DifficultyLevel> DifficultyLevels { get; set; }
+        public DbSet<Answer> Answers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
