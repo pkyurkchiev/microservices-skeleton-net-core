@@ -1,6 +1,5 @@
 ﻿using KnowledgeBase.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 
 namespace KnowledgeBase.Data
 {
@@ -39,16 +38,5 @@ namespace KnowledgeBase.Data
                 .WithMany(c => c.UserTests)
                 .HasForeignKey(bc => bc.TestId);
         }
-
-        //public class KnowledgeBaseContextDesignFactory : IDesignTimeDbContextFactory<KnowledgeBaseDbContext>
-        //{
-        //    public KnowledgeBaseDbContext CreateDbContext(string[] args)
-        //    {
-        //        var optionsBuilder = new DbContextOptionsBuilder<KnowledgeBaseDbContext>()
-        //            .UseSqlServer("Server=tcp:127.0.0.1,5433;Database=SkeletonOnContainers.Services.KnowledgeBaseDb;User Id=sa;Password=Pass@word;");
-
-        //        return new KnowledgeBaseDbContext(optionsBuilder.Options);
-        //    }
-        //}
     }
 }

@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace KnowledgeBase.Data.Migrations
+namespace KnowledgeBase.API.Migrations
 {
     [DbContext(typeof(KnowledgeBaseDbContext))]
-    [Migration("20191210115537_Init")]
-    partial class Init
+    [Migration("20191211194057_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

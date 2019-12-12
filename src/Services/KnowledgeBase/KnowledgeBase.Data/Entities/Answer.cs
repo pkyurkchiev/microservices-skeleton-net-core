@@ -10,6 +10,5 @@
         public string Text { get; set; }
 
         #endregion
-
     }
 }

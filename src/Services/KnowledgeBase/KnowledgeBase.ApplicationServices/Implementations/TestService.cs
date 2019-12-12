@@ -24,7 +24,7 @@ namespace KnowledgeBase.ApplicationServices.Implementations
         {
             GetTestResponse result = new GetTestResponse();
 
-            Test test = await _unitOfWork.Tests.GetById(getTestRequest.Id);
+            Test test = await _unitOfWork.GetRepository<ITestRepository>().GetById(getTestRequest.Id);
             result.Test = test.ConvertToViewModel();
 
             return result;
@@ -32,7 +32,12 @@ namespace KnowledgeBase.ApplicationServices.Implementations
 
         public async Task<GenerateTestReponse> PutGenerateTests(GenerateTestRequest generateTestRequest)
         {
-            throw new NotImplementedException();
+            GenerateTestReponse result = new GenerateTestReponse();
+
+            await _unitOfWork.GetRepository<ITestRepository>().GenerateTests();
+            await _unitOfWork.SaveChangesAsync();
+
+            return result;
         }
     }
 }

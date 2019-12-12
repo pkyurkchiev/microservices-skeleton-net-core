@@ -1,8 +1,9 @@
-﻿using KnowledgeBase.Data.Entities;
-using KnowledgeBase.Data.Entities.Interfaces;
-using Microsoft.EntityFrameworkCore;
+﻿using KnowledgeBase.Data;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace KnowledgeBase.Infrastructure.Repositories
 {
@@ -10,107 +11,69 @@ namespace KnowledgeBase.Infrastructure.Repositories
     {
         #region Fields
 
-        private readonly DbContext context;
         private readonly Dictionary<Type, object> repositories = new Dictionary<Type, object>();
 
         #endregion
 
         #region Constructors
 
-        public UnitOfWork(DbContext context)
+        public UnitOfWork(KnowledgeBaseDbContext context)
         {
-            this.context = context;
+            this.Context = context;
         }
 
         #endregion
 
         #region Methods
+        
+        public KnowledgeBaseDbContext Context { get; }
 
-        public IRepository<Answer> Answers
+        public int SaveChanges() => this.Context.SaveChanges();
+
+        public async Task<int> SaveChangesAsync() => await this.Context.SaveChangesAsync();
+
+        public TRepository GetRepository<TRepository>() where TRepository : class
         {
-            get
+            Type modelType = typeof(TRepository);
+
+            if (!repositories.ContainsKey(modelType))
             {
-                return this.GetRepository<Answer>();
+                Assembly asm = Assembly.GetExecutingAssembly();
+                var types = asm.GetTypes().Where(x => x.IsClass
+                                                      && !x.IsAbstract
+                                                      && modelType.IsAssignableFrom(x)
+                    );
+
+                TRepository returnVar = null;
+                foreach (Type x in types)
+                {
+                    ConstructorInfo[] mi = x.GetConstructors();
+                    returnVar = (TRepository)Activator.CreateInstance(x.UnderlyingSystemType, new object[] { Context });
+                }
+
+                if (returnVar != null)
+                {
+                    lock (repositories)
+                        repositories.Add(modelType, returnVar);
+                    return returnVar;
+                }
             }
+
+            return (TRepository)repositories[modelType];
         }
 
-        public IRepository<DifficultyLevel> DifficultyLevels
-        {
-            get
-            {
-                return this.GetRepository<DifficultyLevel>();
-            }
-        }
-
-        public IRepository<Question> Questions
-        {
-            get
-            {
-                return this.GetRepository<Question>();
-            }
-        }
-
-        public IRepository<Test> Tests
-        {
-            get
-            {
-                return this.GetRepository<Test>();
-            }
-        }
-
-        public IRepository<User> Users
-        {
-            get
-            {
-                return this.GetRepository<User>();
-            }
-        }
-
-        public DbContext Context
-        {
-            get
-            {
-                return this.context;
-            }
-        }
-
-        public void Dispose()
-        {
-            this.Dispose(true);
-        }
-
-        public int Commit()
-        {
-            return this.context.SaveChanges();
-        }
+        public void Dispose() => this.Dispose(true);
+        #endregion
 
         protected void Dispose(bool disposing)
         {
             if (disposing)
             {
-                if (this.context != null)
+                if (this.Context != null)
                 {
-                    this.context.Dispose();
+                    this.Context.Dispose();
                 }
             }
         }
-
-        #endregion
-
-        #region Private Methods
-
-        private IRepository<T> GetRepository<T>() where T : class , ISoftDelete
-        {
-            if (!this.repositories.ContainsKey(typeof(T)))
-            {
-                var type = typeof(Repository<T>);
-
-                this.repositories.Add(typeof(T), Activator.CreateInstance(type, this.context));
-            }
-
-            return (IRepository<T>)this.repositories[typeof(T)];
-        }
-
-        #endregion
     }
 }

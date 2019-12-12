@@ -1,4 +1,5 @@
-﻿using KnowledgeBase.Data.Entities.Enums;
+﻿using KnowledgeBase.Data;
+using KnowledgeBase.Data.Entities.Enums;
 using KnowledgeBase.Data.Entities.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -13,7 +14,7 @@ namespace KnowledgeBase.Infrastructure.Repositories
     public class Repository<T> : IRepository<T> where T : class, ISoftDelete
     {
         #region Constructors
-        public Repository(DbContext context)
+        public Repository(KnowledgeBaseDbContext context)
         {
             this.Context = context ?? throw new ArgumentException("An instance of DbContext is required to use this repository.", "context");
             this.DbSet = this.Context.Set<T>();
@@ -27,7 +28,7 @@ namespace KnowledgeBase.Infrastructure.Repositories
 
         protected DbSet<T> DbSet { get; set; }
 
-        protected DbContext Context { get; set; }
+        protected KnowledgeBaseDbContext Context { get; set; }
 
         public virtual async Task<IList<T>> GetAll(DeleteStatus deleteStatus = DeleteStatus.NotDeleted)
         {

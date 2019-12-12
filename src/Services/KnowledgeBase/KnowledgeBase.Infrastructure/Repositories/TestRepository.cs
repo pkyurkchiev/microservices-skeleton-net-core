@@ -1,23 +1,59 @@
-﻿using KnowledgeBase.Data.Entities;
+﻿using KnowledgeBase.Data;
+using KnowledgeBase.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace KnowledgeBase.Infrastructure.Repositories
 {
     public class TestRepository : Repository<Test>, ITestRepository
     {
-        public TestRepository(DbContext context) : base(context)
+        public TestRepository(KnowledgeBaseDbContext context) : base(context)
         { }
 
         public async Task GenerateTests()
         {
-            using DbCommand command = Context.Database.GetDbConnection().CreateCommand();
-            command.CommandText = "SELECT * From Table1";
-            await Context.Database.OpenConnectionAsync();
-            using (DbDataReader result = await command.ExecuteReaderAsync())
+            using (DbCommand command = Context.Database.GetDbConnection().CreateCommand())
             {
-                result[0].ToString();
+                command.CommandText = @"SELECT g1.UserId as UserId,
+                                           ISNULL(a.QuestionId, g1.QuestionId) AS QuestionId,
+                                           g1.Question AS QuestionText,
+                                           a.TEXT AS AnswerText
+                                    FROM Answers a
+                                    INNER JOIN
+                                      (SELECT a.UserId,
+                                              a.QuestionId,
+                                              a.Question,
+                                              a.CorrectAnswerId
+                                       FROM
+                                         (SELECT u.Id AS UserId,
+                                                 q.Id AS QuestionId,
+                                                 q.Text AS Question,
+                                                 q.CorrectAnswerId,
+                                                 ROW_NUMBER() OVER (PARTITION BY u.Id
+                                                                    ORDER BY CRYPT_GEN_RANDOM(10) DESC) AS RNO
+                                          FROM Users u
+                                          CROSS
+                                              JOIN Questions q) a
+                                       WHERE RNO <= 5 ) g1 ON (a.QuestionId = g1.QuestionId)
+                                    OR (g1.CorrectAnswerId = a.Id)
+                                    ORDER BY UserId,
+                                             Question,
+                                             CRYPT_GEN_RANDOM(10)";
+                await Context.Database.OpenConnectionAsync();
+                using (DbDataReader reader = await command.ExecuteReaderAsync())
+                {
+                    var test = await this.DbSet.AddAsync(new Test());
+                    while (await reader.ReadAsync())
+                    {
+                        this.Context.Entry(new TestQuestion { TestId = test.Entity.Id, QuestionId = reader.GetGuid(1) }).State = EntityState.Added;
+                        if(this.Context.Users.Where(x => x.UserTests.Count() == 0).Count() == 0)
+                            this.Context.Entry(new UserTest { UserId = reader.GetGuid(0), TestId = test.Entity.Id }).State = EntityState.Added;
+                    }
+                }
             }
         }
     }

@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -20,7 +19,10 @@ namespace KnowledgeBase.API
 {
     using EventBusRabbitMQ;
     using HealthChecks.UI.Client;
+    using KnowledgeBase.ApplicationServices.Implementations;
+    using KnowledgeBase.ApplicationServices.Interfaces;
     using KnowledgeBase.Infrastructure;
+    using KnowledgeBase.Infrastructure.Repositories;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.OpenApi.Models;
@@ -50,7 +52,9 @@ namespace KnowledgeBase.API
 
             services.AddControllers();//.SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddCustomHealthCheck(Configuration);
+            services.AddCustomHealthCheck(Configuration)
+                    .AddReposiotries(Configuration)
+                    .AddServices(Configuration);
 
             ConfigureAuthService(services);
 
@@ -89,13 +93,11 @@ namespace KnowledgeBase.API
             // Add framework services.
             services.AddSwaggerGen(options =>
             {
-                //options.DescribeAllEnumsAsStrings();
                 options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
                     Title = "SkeletonOnContainers - KnowledgeBase HTTP API",
                     Version = "v1",
-                    Description = "The KnowledgeBase Microservice HTTP API. This is a Data-Driven/CRUD microservice sample",
-                    //TermsOfService = "Terms Of Service"
+                    Description = "The KnowledgeBase Microservice HTTP API. This is a Data-Driven/CRUD microservice sample"
                 });
 
                 options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -118,7 +120,6 @@ namespace KnowledgeBase.API
                     builder => builder.AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    //.AllowCredentials()
                     );
             });
 
@@ -213,6 +214,20 @@ namespace KnowledgeBase.API
 
     public static class CustomExtensionMethods
     {
+        public static IServiceCollection AddReposiotries(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddScoped<ITestRepository, TestRepository>();
+
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            return services;
+        }
+
+        public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddTransient<ITestService, TestService>();
+            return services;
+        }
+
         public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
         {
             var hcBuilder = services.AddHealthChecks();

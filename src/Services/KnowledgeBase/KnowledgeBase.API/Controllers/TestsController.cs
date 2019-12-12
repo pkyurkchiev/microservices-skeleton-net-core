@@ -21,7 +21,6 @@ namespace KnowledgeBase.API.Controllers
             _testService = testService ?? throw new ArgumentNullException("TestService in PizzasController");
         }
 
-        // GET api/values/5
         [HttpGet("{id}")]
         [Produces(typeof(ServiceResponseBase))]
         public async Task<IActionResult> Get([FromRoute] Guid id)
@@ -30,8 +29,7 @@ namespace KnowledgeBase.API.Controllers
             return Ok(response);
         }
 
-        // POST api/values
-        [HttpPut]
+        [HttpPut("generator")]
         public async Task<IActionResult> Generate()
         {
             ServiceResponseBase response = await _testService.PutGenerateTests(new GenerateTestRequest());

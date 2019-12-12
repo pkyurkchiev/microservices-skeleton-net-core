@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace KnowledgeBase.Data.Migrations
+namespace KnowledgeBase.API.Migrations
 {
     [DbContext(typeof(KnowledgeBaseDbContext))]
     partial class KnowledgeBaseDbContextModelSnapshot : ModelSnapshot
