@@ -8,6 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20191211194057_Initial.cs" />
+    <Compile Remove="Migrations\20191211194057_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20191212121118_Initial.cs" />
+    <Compile Remove="Migrations\20191212121118_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20191212121828_Initial.cs" />
+    <Compile Remove="Migrations\20191212121828_Initial.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="3.0.3" />
     <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="3.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="3.0.0" />

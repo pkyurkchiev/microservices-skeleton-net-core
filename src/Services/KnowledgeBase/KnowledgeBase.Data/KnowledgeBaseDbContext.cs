@@ -16,16 +16,23 @@ namespace KnowledgeBase.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TestQuestion>()
-                .HasKey(bc => new { bc.TestId, bc.QuestionId });
-            modelBuilder.Entity<TestQuestion>()
+            modelBuilder.Entity<TestQuestionAnswer>()
+                .HasKey(bc => new { bc.TestId, bc.QuestionId, bc.AnswerId });
+            modelBuilder.Entity<TestQuestionAnswer>()
                 .HasOne(bc => bc.Test)
-                .WithMany(b => b.TestQuestions)
+                .WithMany(b => b.TestQuestionAnswers)
                 .HasForeignKey(bc => bc.TestId);
-            modelBuilder.Entity<TestQuestion>()
+            modelBuilder.Entity<TestQuestionAnswer>()
                 .HasOne(bc => bc.Question)
-                .WithMany(c => c.TestQuestions)
-                .HasForeignKey(bc => bc.QuestionId);
+                .WithMany(c => c.TestQuestionAnswers)
+                .HasForeignKey(bc => bc.QuestionId)
+                .Metadata.DeleteBehavior = DeleteBehavior.Restrict;
+            modelBuilder.Entity<TestQuestionAnswer>()
+                .HasOne(bc => bc.Answer)
+                .WithMany(c => c.TestQuestionAnswers)
+                .HasForeignKey(bc => bc.AnswerId)
+                .Metadata.DeleteBehavior = DeleteBehavior.Restrict;
+
 
             modelBuilder.Entity<UserTest>()
                 .HasKey(bc => new { bc.UserId, bc.TestId });

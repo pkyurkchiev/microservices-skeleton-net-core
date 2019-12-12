@@ -16,11 +16,13 @@ namespace KnowledgeBase.Infrastructure.Repositories
 
         public async Task GenerateTests()
         {
+            Guid userIdTemp = new Guid();
             using (DbCommand command = Context.Database.GetDbConnection().CreateCommand())
             {
                 command.CommandText = @"SELECT g1.UserId as UserId,
                                            ISNULL(a.QuestionId, g1.QuestionId) AS QuestionId,
                                            g1.Question AS QuestionText,
+                                           a.Id AS AnswerId,
                                            a.TEXT AS AnswerText
                                     FROM Answers a
                                     INNER JOIN
@@ -46,12 +48,17 @@ namespace KnowledgeBase.Infrastructure.Repositories
                 await Context.Database.OpenConnectionAsync();
                 using (DbDataReader reader = await command.ExecuteReaderAsync())
                 {
-                    var test = await this.DbSet.AddAsync(new Test());
+                    Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Test> test = await this.DbSet.AddAsync(new Test());
                     while (await reader.ReadAsync())
                     {
-                        this.Context.Entry(new TestQuestion { TestId = test.Entity.Id, QuestionId = reader.GetGuid(1) }).State = EntityState.Added;
-                        if(this.Context.Users.Where(x => x.UserTests.Count() == 0).Count() == 0)
+                        if (userIdTemp != reader.GetGuid(0))
+                        {
+                            test = await this.DbSet.AddAsync(new Test());
                             this.Context.Entry(new UserTest { UserId = reader.GetGuid(0), TestId = test.Entity.Id }).State = EntityState.Added;
+                        }
+                        this.Context.Entry(new TestQuestionAnswer { TestId = test.Entity.Id, QuestionId = reader.GetGuid(1), AnswerId = reader.GetGuid(3), CreatedOn = DateTime.UtcNow }).State = EntityState.Added;
+
+                        userIdTemp = reader.GetGuid(0);
                     }
                 }
             }

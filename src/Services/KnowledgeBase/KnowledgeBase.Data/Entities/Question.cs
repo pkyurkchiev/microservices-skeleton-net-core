@@ -18,7 +18,7 @@
         public DifficultyLevel DifficultyLevel { get; set; }
 
         public ICollection<Answer> Answers { get; set; }
-        public ICollection<TestQuestion> TestQuestions { get; set; }
+        public ICollection<TestQuestionAnswer> TestQuestionAnswers { get; set; }
         #endregion
 
         #region Constructors

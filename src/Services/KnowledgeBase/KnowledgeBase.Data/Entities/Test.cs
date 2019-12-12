@@ -6,10 +6,10 @@ namespace KnowledgeBase.Data.Entities
     {
         #region Properties
 
-        public string Comments { get; set; }
+        public string Description { get; set; }
 
         public ICollection<UserTest> UserTests { get; set; }
-        public ICollection<TestQuestion> TestQuestions { get; set; }
+        public ICollection<TestQuestionAnswer> TestQuestionAnswers { get; set; }
 
         #endregion
     }

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KnowledgeBase.API.Migrations
 {
     [DbContext(typeof(KnowledgeBaseDbContext))]
-    [Migration("20191211194057_Initial")]
+    [Migration("20191212122548_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,7 +96,7 @@ namespace KnowledgeBase.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Comments")
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
@@ -107,7 +107,7 @@ namespace KnowledgeBase.API.Migrations
                     b.ToTable("Tests");
                 });
 
-            modelBuilder.Entity("KnowledgeBase.Data.Entities.TestQuestion", b =>
+            modelBuilder.Entity("KnowledgeBase.Data.Entities.TestQuestionAnswer", b =>
                 {
                     b.Property<Guid>("TestId")
                         .HasColumnType("uniqueidentifier");
@@ -115,11 +115,19 @@ namespace KnowledgeBase.API.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("TestId", "QuestionId");
+                    b.Property<Guid>("AnswerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("TestId", "QuestionId", "AnswerId");
+
+                    b.HasIndex("AnswerId");
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("TestQuestion");
+                    b.ToTable("TestQuestionAnswer");
                 });
 
             modelBuilder.Entity("KnowledgeBase.Data.Entities.User", b =>
@@ -178,16 +186,22 @@ namespace KnowledgeBase.API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("KnowledgeBase.Data.Entities.TestQuestion", b =>
+            modelBuilder.Entity("KnowledgeBase.Data.Entities.TestQuestionAnswer", b =>
                 {
+                    b.HasOne("KnowledgeBase.Data.Entities.Answer", "Answer")
+                        .WithMany("TestQuestionAnswers")
+                        .HasForeignKey("AnswerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("KnowledgeBase.Data.Entities.Question", "Question")
-                        .WithMany("TestQuestions")
+                        .WithMany("TestQuestionAnswers")
                         .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("KnowledgeBase.Data.Entities.Test", "Test")
-                        .WithMany("TestQuestions")
+                        .WithMany("TestQuestionAnswers")
                         .HasForeignKey("TestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

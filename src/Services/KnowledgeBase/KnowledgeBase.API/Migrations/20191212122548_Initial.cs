@@ -26,7 +26,7 @@ namespace KnowledgeBase.API.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    Comments = table.Column<string>(nullable: true)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -112,23 +112,31 @@ namespace KnowledgeBase.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TestQuestion",
+                name: "TestQuestionAnswer",
                 columns: table => new
                 {
                     TestId = table.Column<Guid>(nullable: false),
-                    QuestionId = table.Column<Guid>(nullable: false)
+                    QuestionId = table.Column<Guid>(nullable: false),
+                    AnswerId = table.Column<Guid>(nullable: false),
+                    CreatedOn = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TestQuestion", x => new { x.TestId, x.QuestionId });
+                    table.PrimaryKey("PK_TestQuestionAnswer", x => new { x.TestId, x.QuestionId, x.AnswerId });
                     table.ForeignKey(
-                        name: "FK_TestQuestion_Questions_QuestionId",
+                        name: "FK_TestQuestionAnswer_Answers_AnswerId",
+                        column: x => x.AnswerId,
+                        principalTable: "Answers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TestQuestionAnswer_Questions_QuestionId",
                         column: x => x.QuestionId,
                         principalTable: "Questions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TestQuestion_Tests_TestId",
+                        name: "FK_TestQuestionAnswer_Tests_TestId",
                         column: x => x.TestId,
                         principalTable: "Tests",
                         principalColumn: "Id",
@@ -151,8 +159,13 @@ namespace KnowledgeBase.API.Migrations
                 column: "DifficultyLevelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestQuestion_QuestionId",
-                table: "TestQuestion",
+                name: "IX_TestQuestionAnswer_AnswerId",
+                table: "TestQuestionAnswer",
+                column: "AnswerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestQuestionAnswer_QuestionId",
+                table: "TestQuestionAnswer",
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
@@ -176,7 +189,7 @@ namespace KnowledgeBase.API.Migrations
                 table: "Answers");
 
             migrationBuilder.DropTable(
-                name: "TestQuestion");
+                name: "TestQuestionAnswer");
 
             migrationBuilder.DropTable(
                 name: "UserTest");
