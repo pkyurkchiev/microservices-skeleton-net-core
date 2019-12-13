@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 EXPOSE 5102
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS buildtime-base
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS buildtime-base
 WORKDIR /src
 
 COPY BuildingBlocks/*/*/*.csproj /csproj-files/

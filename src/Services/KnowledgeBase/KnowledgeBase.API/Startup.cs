@@ -17,7 +17,7 @@ using System.Reflection;
 
 namespace KnowledgeBase.API
 {
-    using EventBusRabbitMQ;
+    using EventBus.RabbitMQ;
     using HealthChecks.UI.Client;
     using KnowledgeBase.ApplicationServices.Implementations;
     using KnowledgeBase.ApplicationServices.Interfaces;
@@ -50,7 +50,7 @@ namespace KnowledgeBase.API
                                          sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
                                      }));
 
-            services.AddControllers();//.SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllers();
 
             services.AddCustomHealthCheck(Configuration)
                     .AddReposiotries(Configuration)

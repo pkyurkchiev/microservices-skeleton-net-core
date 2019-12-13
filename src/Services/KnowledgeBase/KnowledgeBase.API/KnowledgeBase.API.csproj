@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\BuildingBlocks\EventMQ\EventBusRabbitMQ\EventBusRabbitMQ.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\EventMQ\EventBusRabbitMQ\EventBus.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\WebHost\WebHost.Customization\WebHost.Customization.csproj" />
     <ProjectReference Include="..\KnowledgeBase.ApplicationServices\KnowledgeBase.ApplicationServices.csproj" />
     <ProjectReference Include="..\KnowledgeBase.Data\KnowledgeBase.Data.csproj" />
