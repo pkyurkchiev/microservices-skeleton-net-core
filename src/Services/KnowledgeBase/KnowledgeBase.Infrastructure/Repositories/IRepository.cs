@@ -2,7 +2,6 @@
 using KnowledgeBase.Data.Entities.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -10,7 +9,7 @@ namespace KnowledgeBase.Infrastructure.Repositories
 {
     public interface IRepository<T> where T : class , ISoftDelete
     {
-        Task<IList<T>> GetAll(DeleteStatus DeleteStatus = DeleteStatus.NotDeleted);
+        Task<IEnumerable<T>> GetAll(DeleteStatus DeleteStatus = DeleteStatus.NotDeleted);
 
         Task<T> GetById(object id, DeleteStatus DeleteStatus = DeleteStatus.NotDeleted);
 

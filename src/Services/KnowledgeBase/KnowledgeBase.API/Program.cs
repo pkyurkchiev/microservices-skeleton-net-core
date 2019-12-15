@@ -1,4 +1,5 @@
-﻿using KnowledgeBase.Data;
+﻿using KnowledgeBase.API.Infrastructure;
+using KnowledgeBase.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +18,7 @@ namespace KnowledgeBase.API
                 .MigrateDbContext<KnowledgeBaseDbContext>((context, services) =>
                 {
                     var configuration = services.GetService<IConfiguration>();
-                    var env = services.GetService<IHostingEnvironment>();
+                    var env = services.GetService<IWebHostEnvironment>();
                     var logger = services.GetService<ILogger<KnowledgeBaseDbContextSeed>>();
 
                     new KnowledgeBaseDbContextSeed()

@@ -8,21 +8,27 @@ namespace KnowledgeBase.ApplicationServices.ModelConversions
 {
     public static class ConversionHelper
     {
-        public static TestViewModel ConvertToViewModel(this Test test)
+        public static TestQuestionAnswerViewModel ConvertToViewModel(this IEnumerable<TestQuestionAnswer> testQuestionAnswers)
         {
-            return new TestViewModel()
-            {
-            };
-        }
+            TestQuestionAnswerViewModel testQuestionAnswerViewModel = new TestQuestionAnswerViewModel { QuesitonViewModels = new List<QuestionViewModel>() };
 
-        public static IEnumerable<TestViewModel> ConvertToViewModels(this IEnumerable<Test> tests)
-        {
-            List<TestViewModel> testViewModels = new List<TestViewModel>();
-            foreach (Test test in tests)
+            QuestionViewModel questionViewModel = new QuestionViewModel();
+            List<AnswerViewModel> answerViewModels = new List<AnswerViewModel>();
+            foreach (var testQuestionAnswer in testQuestionAnswers)
             {
-                testViewModels.Add(test.ConvertToViewModel());
+                answerViewModels.Add(new AnswerViewModel { AnswerId = testQuestionAnswer.AnswerId, AnswerText = testQuestionAnswer.AnswerText });
+
+                if (questionViewModel.QuestionId != testQuestionAnswer.QuestionId)
+                {
+                    testQuestionAnswerViewModel = new TestQuestionAnswerViewModel { Id = testQuestionAnswer.TestId };
+                    questionViewModel.AnswerViewModels = answerViewModels;
+                    testQuestionAnswerViewModel.QuesitonViewModels.Add(questionViewModel);
+                }
+
+                questionViewModel = new QuestionViewModel { QuestionId = testQuestionAnswer.QuestionId, QuestionText = testQuestionAnswer.QuestionText };
             }
-            return testViewModels;
+
+            return testQuestionAnswerViewModel;
         }
     }
 }

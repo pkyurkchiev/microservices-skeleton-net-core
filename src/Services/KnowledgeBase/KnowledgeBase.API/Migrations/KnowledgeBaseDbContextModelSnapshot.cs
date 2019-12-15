@@ -116,8 +116,20 @@ namespace KnowledgeBase.API.Migrations
                     b.Property<Guid>("AnswerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AnswerText")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("QuestionText")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TestId", "QuestionId", "AnswerId");
 

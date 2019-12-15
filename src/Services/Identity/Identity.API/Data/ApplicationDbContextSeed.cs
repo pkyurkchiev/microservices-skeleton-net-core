@@ -13,7 +13,7 @@ namespace Identity.API.Data
     {
         private readonly IPasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
 
-        public async Task SeedAsync(ApplicationDbContext context, IHostingEnvironment env,
+        public async Task SeedAsync(ApplicationDbContext context, IWebHostEnvironment env,
             ILogger<ApplicationDbContextSeed> logger, int? retry = 0)
         {
             int retryForAvaiability = retry.Value;

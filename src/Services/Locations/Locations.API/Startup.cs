@@ -2,19 +2,17 @@
 using Autofac.Extensions.DependencyInjection;
 using EventBus;
 using EventBus.Abstractions;
+using HealthChecks.UI.Client;
 using Locations.Data;
 using Locations.Infrastructure.Repositories;
 using Locations.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -40,7 +38,7 @@ namespace Locations.API
         {
             services
                 .AddCustomHealthCheck(Configuration)
-                .AddMvc();
+                .AddControllers();
 
             ConfigureAuthService(services);
 
@@ -125,10 +123,10 @@ namespace Locations.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            app.UseAuthentication();
             app.UseCors("CorsPolicy");
 
             app.UseRouting();
+            ConfigureAuth(app);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
@@ -193,6 +191,12 @@ namespace Locations.API
             });
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
+        }
+
+        protected virtual void ConfigureAuth(IApplicationBuilder app)
+        {
+            app.UseAuthentication();
+            app.UseAuthorization();
         }
     }
 

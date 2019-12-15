@@ -118,6 +118,10 @@ namespace KnowledgeBase.API.Migrations
                     TestId = table.Column<Guid>(nullable: false),
                     QuestionId = table.Column<Guid>(nullable: false),
                     AnswerId = table.Column<Guid>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    QuestionText = table.Column<string>(nullable: true),
+                    AnswerText = table.Column<string>(nullable: true),
                     CreatedOn = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>

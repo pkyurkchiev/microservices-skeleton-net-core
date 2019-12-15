@@ -58,8 +58,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Status.Web", "WebApplicatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KnowledgeBase.ApplicationServices", "Services\KnowledgeBase\KnowledgeBase.ApplicationServices\KnowledgeBase.ApplicationServices.csproj", "{B94A1F89-8838-49D8-9DD8-1BB9DFF3DB43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebHostCustomizations", "..\WebHostCustomizations\WebHostCustomizations.csproj", "{82EFFFC3-46FE-4A8A-9A28-5328CA677731}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -126,10 +124,6 @@ Global
 		{B94A1F89-8838-49D8-9DD8-1BB9DFF3DB43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B94A1F89-8838-49D8-9DD8-1BB9DFF3DB43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B94A1F89-8838-49D8-9DD8-1BB9DFF3DB43}.Release|Any CPU.Build.0 = Release|Any CPU
-		{82EFFFC3-46FE-4A8A-9A28-5328CA677731}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{82EFFFC3-46FE-4A8A-9A28-5328CA677731}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{82EFFFC3-46FE-4A8A-9A28-5328CA677731}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{82EFFFC3-46FE-4A8A-9A28-5328CA677731}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -158,7 +152,6 @@ Global
 		{D96270F0-CD7C-4EF4-AA00-8B99FDE02F82} = {8E106539-57CC-4464-AE2F-9E12024DF895}
 		{6F331536-5F39-43DD-ADC4-0EF7890BC35A} = {46E69741-840A-4196-AFFD-1E5DC2DF987B}
 		{B94A1F89-8838-49D8-9DD8-1BB9DFF3DB43} = {8E106539-57CC-4464-AE2F-9E12024DF895}
-		{82EFFFC3-46FE-4A8A-9A28-5328CA677731} = {33A93D0E-A2CC-4FEA-ACBC-EF964BF52FB3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {92FB6DB3-FBAF-4478-BF31-F0FA54865BD5}

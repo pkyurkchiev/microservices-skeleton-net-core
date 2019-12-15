@@ -4,6 +4,6 @@ namespace KnowledgeBase.ApplicationServices.Messaging.Tests
 {
     public class GetTestResponse : ServiceResponseBase
     {
-        public TestViewModel Test { get; set; }
+        public TestQuestionAnswerViewModel Test { get; set; }
     }
 }

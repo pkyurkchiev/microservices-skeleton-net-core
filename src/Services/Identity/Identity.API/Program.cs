@@ -5,25 +5,37 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using System;
 using System.IO;
 
 namespace Identity.API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static readonly string Namespace = typeof(Program).Namespace;
+        public static readonly string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
+        public static int Main(string[] args)
         {
-            BuildWebHost(args)
-                .MigrateDbContext<PersistedGrantDbContext>((_, __) => { })
-                .MigrateDbContext<ApplicationDbContext>((context, services) =>
-            {
-                var env = services.GetService<IHostingEnvironment>();
-                var logger = services.GetService<ILogger<ApplicationDbContextSeed>>();
+            var configuration = GetConfiguration();
 
-                new ApplicationDbContextSeed()
-                    .SeedAsync(context, env, logger)
-                    .Wait();
-            })
+            Log.Logger = CreateSerilogLogger(configuration);
+            try
+            {
+                Log.Information("Configuring web host ({ApplicationContext})...", AppName);
+                var host = BuildWebHost(configuration, args);
+
+                Log.Information("Applying migrations ({ApplicationContext})...", AppName);
+                host.MigrateDbContext<PersistedGrantDbContext>((_, __) => { })
+                .MigrateDbContext<ApplicationDbContext>((context, services) =>
+                {
+                    var env = services.GetService<IWebHostEnvironment>();
+                    var logger = services.GetService<ILogger<ApplicationDbContextSeed>>();
+
+                    new ApplicationDbContextSeed()
+                        .SeedAsync(context, env, logger)
+                        .Wait();
+                })
                 .MigrateDbContext<ConfigurationDbContext>((context, services) =>
                 {
                     var configuration = services.GetService<IConfiguration>();
@@ -31,27 +43,54 @@ namespace Identity.API
                     new ConfigurationDbContextSeed()
                          .SeedAsync(context, configuration)
                          .Wait();
-                })
-            .Run();
+                });
+
+                Log.Information("Starting web host ({ApplicationContext})...", AppName);
+                host.Run();
+
+                return 0;
+
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Program terminated unexpectedly ({ApplicationContext})!", AppName);
+                return 1;
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .ConfigureAppConfiguration((builderContext, config) =>
-                {
-                    config.AddEnvironmentVariables();
-                })
-                .ConfigureLogging((hostingContext, builder) =>
-                {
-                    builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    builder.AddConsole();
-                    builder.AddDebug();
-                })
-                .UseApplicationInsights()
-                .Build();
+        private static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
+                WebHost.CreateDefaultBuilder(args)
+                    .CaptureStartupErrors(false)
+                    .UseStartup<Startup>()
+                    //.UseApplicationInsights()
+                    .UseContentRoot(Directory.GetCurrentDirectory())
+                    .UseConfiguration(configuration)
+                    .UseSerilog()
+                    .Build();
+
+        private static Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
+        {
+            return new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .Enrich.WithProperty("ApplicationContext", AppName)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+        }
+
+        private static IConfiguration GetConfiguration()
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables();
+
+            return builder.Build();
+        }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CacheManager.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -40,34 +39,34 @@ namespace WebAPI.Base
                     .AllowCredentials());
             });
 
-            services.AddAuthentication()
-                .AddJwtBearer(authenticationProviderKey, x =>
-                {
-                    x.Authority = identityUrl;
-                    x.RequireHttpsMetadata = false;
-                    x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
-                    {
-                        ValidAudiences = new[] { "locations" }
-                    };
-                    x.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents()
-                    {
-                        OnAuthenticationFailed = async ctx =>
-                        {
-                            int i = 0;
-                        },
-                        OnTokenValidated = async ctx =>
-                        {
-                            int i = 0;
-                        },
+        //    services.AddAuthentication()
+        //        .AddJwtBearer(authenticationProviderKey, x =>
+        //        {
+        //            x.Authority = identityUrl;
+        //            x.RequireHttpsMetadata = false;
+        //            x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+        //            {
+        //                ValidAudiences = new[] { "locations" }
+        //            };
+        //            x.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents()
+        //            {
+        //                OnAuthenticationFailed = async ctx =>
+        //                {
+        //                    int i = 0;
+        //                },
+        //                OnTokenValidated = async ctx =>
+        //                {
+        //                    int i = 0;
+        //                },
 
-                        OnMessageReceived = async ctx =>
-                        {
-                            int i = 0;
-                        }
-                    };
-                });
+        //                OnMessageReceived = async ctx =>
+        //                {
+        //                    int i = 0;
+        //                }
+        //            };
+        //        });
 
-            services.AddOcelot(_cfg);
+        //    services.AddOcelot(_cfg);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,7 +83,7 @@ namespace WebAPI.Base
                 app.UseDeveloperExceptionPage();
             }
 
-            loggerFactory.AddConsole(_cfg.GetSection("Logging"));
+            //loggerFactory.AddConsole(_cfg.GetSection("Logging"));
 
             app.UseCors("CorsPolicy");
 

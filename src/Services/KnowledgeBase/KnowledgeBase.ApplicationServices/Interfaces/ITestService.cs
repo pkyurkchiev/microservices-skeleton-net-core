@@ -5,8 +5,7 @@ namespace KnowledgeBase.ApplicationServices.Interfaces
 {
     public interface ITestService
     {
-        Task<GetTestResponse> GetById(GetTestRequest getTestRequest);
-
+        Task<GetTestQuestionAnswersResponse> GetAll(GetTestQuestionAnswersRequest getTestQuestionAnswersRequest);
         Task<GenerateTestReponse> PutGenerateTests(GenerateTestRequest generateTestRequest);
     }
 }

@@ -3,7 +3,6 @@ using Autofac.Extensions.DependencyInjection;
 using EventBus;
 using EventBus.Abstractions;
 using KnowledgeBase.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using Microsoft.Extensions.Hosting;
 
 namespace KnowledgeBase.API
 {
@@ -23,10 +22,12 @@ namespace KnowledgeBase.API
     using KnowledgeBase.ApplicationServices.Interfaces;
     using KnowledgeBase.Infrastructure;
     using KnowledgeBase.Infrastructure.Repositories;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.OpenApi.Models;
     using RabbitMQ.Client;
+    using System.IdentityModel.Tokens.Jwt;
 
     public class Startup
     {
@@ -131,7 +132,7 @@ namespace KnowledgeBase.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -143,24 +144,22 @@ namespace KnowledgeBase.API
                 app.UseHsts();
             }
 
-
-            app.UseHealthChecks("/hc", new HealthCheckOptions()
-            {
-                Predicate = _ => true,
-                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            });
-
-            app.UseHealthChecks("/liveness", new HealthCheckOptions
-            {
-                Predicate = r => r.Name.Contains("self")
-            });
-
             app.UseRouting();
-            app.UseAuthentication();
+            ConfigureAuth(app);
             app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+                endpoints.MapHealthChecks("/liveness", new HealthCheckOptions
+                {
+                    Predicate = r => r.Name.Contains("self")
+                });
             });
 
             app.UseSwagger()
@@ -210,6 +209,12 @@ namespace KnowledgeBase.API
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
         }
+
+        protected virtual void ConfigureAuth(IApplicationBuilder app)
+        {
+            app.UseAuthentication();
+            app.UseAuthorization();
+        }
     }
 
     public static class CustomExtensionMethods
@@ -235,14 +240,8 @@ namespace KnowledgeBase.API
             hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
 
             hcBuilder.AddSqlServer(connectionString: configuration["ConnectionString"],
-                   //healthQuery: "SELECT 1;",
                    name: "Knowledgebase-mssql-check",
-                   tags: new string[] { "KnowledgeBaseDB", "db", "sql", "mssql" });
-
-            hcBuilder.AddRabbitMQ(
-                    $"amqp://{configuration["EventBusConnection"]}",
-                    name: "locations-rabbitmq-check",
-                    tags: new string[] { "rabbitmq", "bus" });
+                   tags: new string[] { "knowledgeBaseDB", "db", "sql", "mssql" });
 
             return services;
         }

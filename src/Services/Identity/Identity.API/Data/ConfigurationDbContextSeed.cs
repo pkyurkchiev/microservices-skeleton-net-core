@@ -1,6 +1,8 @@
 ﻿using Identity.API.Configuration;
 using IdentityServer4.EntityFramework.DbContexts;
+using IdentityServer4.EntityFramework.Entities;
 using IdentityServer4.EntityFramework.Mappers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +31,23 @@ namespace Identity.API.Data
                     await context.Clients.AddAsync(client.ToEntity());
                 }
                 await context.SaveChangesAsync();
+            }
+            else
+            {
+                List<ClientRedirectUri> oldRedirects = (await context.Clients.Include(c => c.RedirectUris).ToListAsync())
+                    .SelectMany(c => c.RedirectUris)
+                    .Where(ru => ru.RedirectUri.EndsWith("/o2c.html"))
+                    .ToList();
+
+                if (oldRedirects.Any())
+                {
+                    foreach (var ru in oldRedirects)
+                    {
+                        ru.RedirectUri = ru.RedirectUri.Replace("/o2c.html", "/oauth2-redirect.html");
+                        context.Update(ru.Client);
+                    }
+                    await context.SaveChangesAsync();
+                }
             }
 
             if (!context.IdentityResources.Any())

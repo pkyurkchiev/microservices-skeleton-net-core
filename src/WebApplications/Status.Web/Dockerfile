@@ -1,21 +1,21 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS buildtime-base
 WORKDIR /src
-COPY *.sln ./
-COPY WebApplications/Status.Web/Status.Web.csproj WebApplications/Status.Web/
-RUN dotnet restore
+
+COPY BuildingBlocks/*/*/*.csproj /csproj-files/
+COPY Services/*/*/*.csproj /csproj-files/
+# TODO: Further improve for cache - restore packages here
+
+FROM buildtime-base AS publish
 COPY . .
 WORKDIR /src/WebApplications/Status.Web
-RUN dotnet build -c Release -o /app
-
-FROM build AS publish
 RUN dotnet publish -c Release -o /app
 
 FROM base AS final
+
 WORKDIR /app
 COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "Status.Web.dll"]

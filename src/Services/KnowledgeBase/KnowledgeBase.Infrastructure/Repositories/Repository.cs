@@ -22,24 +22,22 @@ namespace KnowledgeBase.Infrastructure.Repositories
 
         #endregion
 
-        //To DO Async Methods :)
-
         #region Properties
 
         protected DbSet<T> DbSet { get; set; }
 
         protected KnowledgeBaseDbContext Context { get; set; }
 
-        public virtual async Task<IList<T>> GetAll(DeleteStatus deleteStatus = DeleteStatus.NotDeleted)
+        #endregion
+
+        #region Methods
+
+        public virtual async Task<IEnumerable<T>> GetAll(DeleteStatus deleteStatus = DeleteStatus.NotDeleted)
         {
             var query = this.DbSet.AsQueryable();
 
             return await SoftDeleteQueryFilter(query, deleteStatus).ToListAsync();
         }
-
-        #endregion
-
-        #region Methods
 
         public virtual async Task<T> GetById(object id, DeleteStatus deleteStatus = DeleteStatus.NotDeleted)
         {

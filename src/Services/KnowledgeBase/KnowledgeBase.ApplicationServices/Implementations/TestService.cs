@@ -17,15 +17,14 @@ namespace KnowledgeBase.ApplicationServices.Implementations
 
         public TestService(IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException("Unit of work");
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException("UnitOfWork");
         }
 
-        public async Task<GetTestResponse> GetById(GetTestRequest getTestRequest)
+        public async Task<GetTestQuestionAnswersResponse> GetAll(GetTestQuestionAnswersRequest getTestQuestionAnswersRequest)
         {
-            GetTestResponse result = new GetTestResponse();
-
-            Test test = await _unitOfWork.GetRepository<ITestRepository>().GetById(getTestRequest.Id);
-            result.Test = test.ConvertToViewModel();
+            GetTestQuestionAnswersResponse result = new GetTestQuestionAnswersResponse();
+            IEnumerable<TestQuestionAnswer> tests = await _unitOfWork.GetRepository<ITestQuestionAnswerRepository>().GetAll();
+            result.TestQuestionAnswers = tests.ConvertToViewModel();
 
             return result;
         }

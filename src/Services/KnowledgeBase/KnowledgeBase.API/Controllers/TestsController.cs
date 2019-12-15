@@ -21,11 +21,11 @@ namespace KnowledgeBase.API.Controllers
             _testService = testService ?? throw new ArgumentNullException("TestService in PizzasController");
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [Produces(typeof(ServiceResponseBase))]
-        public async Task<IActionResult> Get([FromRoute] Guid id)
+        public async Task<IActionResult> Get()
         {
-            ServiceResponseBase response = await _testService.GetById(new GetTestRequest(id));
+            ServiceResponseBase response = await _testService.GetAll(new GetTestQuestionAnswersRequest());
             return Ok(response);
         }
 

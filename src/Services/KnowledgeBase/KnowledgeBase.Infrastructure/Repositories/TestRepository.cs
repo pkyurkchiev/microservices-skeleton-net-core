@@ -2,9 +2,7 @@
 using KnowledgeBase.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace KnowledgeBase.Infrastructure.Repositories
@@ -56,7 +54,7 @@ namespace KnowledgeBase.Infrastructure.Repositories
                             test = await this.DbSet.AddAsync(new Test());
                             this.Context.Entry(new UserTest { UserId = reader.GetGuid(0), TestId = test.Entity.Id }).State = EntityState.Added;
                         }
-                        this.Context.Entry(new TestQuestionAnswer { TestId = test.Entity.Id, QuestionId = reader.GetGuid(1), AnswerId = reader.GetGuid(3), CreatedOn = DateTime.UtcNow }).State = EntityState.Added;
+                        this.Context.Entry(new TestQuestionAnswer { TestId = test.Entity.Id, QuestionId = reader.GetGuid(1), QuestionText = reader.GetString(2), AnswerId = reader.GetGuid(3), AnswerText = reader.GetString(4), CreatedOn = DateTime.UtcNow }).State = EntityState.Added;
 
                         userIdTemp = reader.GetGuid(0);
                     }

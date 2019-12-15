@@ -1,4 +1,6 @@
-﻿using HealthChecks.UI.Client;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using HealthChecks.UI.Client;
 using Identity.API.Data;
 using Identity.API.Data.Entities;
 using Identity.API.Services;
@@ -10,7 +12,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -27,7 +31,7 @@ namespace Identity.API
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -43,14 +47,13 @@ namespace Identity.API
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddMvc();
-
             services.AddHealthChecks()
                .AddCheck("self", () => HealthCheckResult.Healthy())
                .AddSqlServer(connectionString: Configuration["ConnectionString"],
-                   //healthQuery: "SELECT 1;",
                    name: "identity-mssql-check",
                    tags: new string[] { "IdentityDB", "db", "sql", "mssql" });
+
+            services.AddTransient<ILoginService<User>, LoginService>();
 
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
            
@@ -81,28 +84,30 @@ namespace Identity.API
                     });
             });
 
-            services.AddTransient<ILoginService<User>, LoginService>();
+            services.AddControllers();
+            services.AddControllersWithViews();
+            services.AddRazorPages();
 
             // Add framework services.
             services.AddSwaggerGen(options =>
             {
-                options.DescribeAllEnumsAsStrings();
-                options.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
                     Title = "SkeletonOnContainers - Identity HTTP API",
                     Version = "v1",
-                    Description = "The Identity Microservice HTTP API. This is a Data-Driven/CRUD microservice sample",
-                    TermsOfService = "Terms Of Service"
+                    Description = "The Identity Microservice HTTP API. This is a Data-Driven/CRUD microservice sample"
                 });
                 
-                options.AddSecurityDefinition("oauth2", new OAuth2Scheme
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
-                    Type = "oauth2",
-                    Flow = "password",
-                    TokenUrl = $"{Configuration.GetValue<string>("IdentityUrlExternal")}/connect/token",
-                    Scopes = new Dictionary<string, string>()
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows
                     {
-                        { "identity", "Identity API" }
+                        Password = new OpenApiOAuthFlow
+                        {
+                            TokenUrl = new Uri($"{Configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
+                            Scopes = new Dictionary<string, string>() { { "identity", "Identity API" } }
+                        }
                     }
                 });
             });
@@ -113,38 +118,64 @@ namespace Identity.API
                     builder => builder.AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    .AllowCredentials());
+                    //.AllowCredentials()
+                    );
             });
+
+            var container = new ContainerBuilder();
+            container.Populate(services);
+
+            return new AutofacServiceProvider(container.Build());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                //app.UseDatabaseErrorPage();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseHealthChecks("/hc", new HealthCheckOptions()
+            var pathBase = Configuration["PATH_BASE"];
+            if (!string.IsNullOrEmpty(pathBase))
             {
-                Predicate = _ => true,
-                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            });
+                loggerFactory.CreateLogger<Startup>().LogDebug("Using PATH BASE '{pathBase}'", pathBase);
+                app.UsePathBase(pathBase);
+            }
 
-            app.UseHealthChecks("/liveness", new HealthCheckOptions
-            {
-                Predicate = r => r.Name.Contains("self")
-            });
+            app.UseStaticFiles();
 
+            // Make work identity server redirections in Edge and lastest versions of browers. WARN: Not valid in a production environment.
+            //app.Use(async (context, next) =>
+            //{
+            //    context.Response.Headers.Add("Content-Security-Policy", "script-src 'unsafe-inline'");
+            //    await next();
+            //});
+
+            app.UseForwardedHeaders();
+            // Adds IdentityServer
             app.UseIdentityServer();
             app.UseCors("CorsPolicy");
-            app.UseStaticFiles();
-            app.UseMvcWithDefaultRoute();
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+                endpoints.MapHealthChecks("/liveness", new HealthCheckOptions
+                {
+                    Predicate = r => r.Name.Contains("self")
+                });
+            });
 
             app.UseSwagger()
                 .UseSwaggerUI(c =>
