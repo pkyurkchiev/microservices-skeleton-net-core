@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using KnowledgeBase.ApplicationServices.Interfaces;
+﻿using KnowledgeBase.ApplicationServices.Interfaces;
 using KnowledgeBase.ApplicationServices.Messaging;
 using KnowledgeBase.ApplicationServices.Messaging.Tests;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace KnowledgeBase.API.Controllers
 {
@@ -21,11 +19,11 @@ namespace KnowledgeBase.API.Controllers
             _testService = testService ?? throw new ArgumentNullException("TestService in PizzasController");
         }
 
-        [HttpGet]
+        [HttpGet("users/{userId}")]
         [Produces(typeof(ServiceResponseBase))]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetById([FromRoute] Guid userId)
         {
-            ServiceResponseBase response = await _testService.GetAll(new GetTestQuestionAnswersRequest());
+            ServiceResponseBase response = await _testService.GetByUserId(new GetTestQuestionAnswersRequest { UserId = userId });
             return Ok(response);
         }
 

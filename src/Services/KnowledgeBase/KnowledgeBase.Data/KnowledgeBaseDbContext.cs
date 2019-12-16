@@ -13,6 +13,7 @@ namespace KnowledgeBase.Data
         public DbSet<Question> Questions { get; set; }
         public DbSet<DifficultyLevel> DifficultyLevels { get; set; }
         public DbSet<Answer> Answers { get; set; }
+        public DbSet<TestQuestionAnswer> TestQuestionAnswers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

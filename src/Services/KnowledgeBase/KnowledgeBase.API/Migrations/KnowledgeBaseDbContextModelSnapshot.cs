@@ -137,7 +137,7 @@ namespace KnowledgeBase.API.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("TestQuestionAnswer");
+                    b.ToTable("TestQuestionAnswers");
                 });
 
             modelBuilder.Entity("KnowledgeBase.Data.Entities.User", b =>

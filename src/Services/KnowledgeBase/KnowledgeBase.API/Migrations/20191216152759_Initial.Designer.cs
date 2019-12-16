@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KnowledgeBase.API.Migrations
 {
     [DbContext(typeof(KnowledgeBaseDbContext))]
-    [Migration("20191215160010_Initial")]
+    [Migration("20191216152759_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -139,7 +139,7 @@ namespace KnowledgeBase.API.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("TestQuestionAnswer");
+                    b.ToTable("TestQuestionAnswers");
                 });
 
             modelBuilder.Entity("KnowledgeBase.Data.Entities.User", b =>

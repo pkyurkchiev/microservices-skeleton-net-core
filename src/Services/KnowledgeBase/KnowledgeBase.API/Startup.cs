@@ -222,6 +222,7 @@ namespace KnowledgeBase.API
         public static IServiceCollection AddReposiotries(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<ITestRepository, TestRepository>();
+            services.AddScoped<ITestQuestionAnswerRepository, TestQuestionAnswerRepository>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             return services;
@@ -240,7 +241,7 @@ namespace KnowledgeBase.API
             hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
 
             hcBuilder.AddSqlServer(connectionString: configuration["ConnectionString"],
-                   name: "Knowledgebase-mssql-check",
+                   name: "knowledgebase-mssql-check",
                    tags: new string[] { "knowledgeBaseDB", "db", "sql", "mssql" });
 
             return services;

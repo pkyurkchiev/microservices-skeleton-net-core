@@ -5,8 +5,6 @@ using KnowledgeBase.Data.Entities;
 using KnowledgeBase.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace KnowledgeBase.ApplicationServices.Implementations
@@ -20,10 +18,10 @@ namespace KnowledgeBase.ApplicationServices.Implementations
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException("UnitOfWork");
         }
 
-        public async Task<GetTestQuestionAnswersResponse> GetAll(GetTestQuestionAnswersRequest getTestQuestionAnswersRequest)
+        public async Task<GetTestQuestionAnswersResponse> GetByUserId(GetTestQuestionAnswersRequest getTestQuestionAnswersRequest)
         {
             GetTestQuestionAnswersResponse result = new GetTestQuestionAnswersResponse();
-            IEnumerable<TestQuestionAnswer> tests = await _unitOfWork.GetRepository<ITestQuestionAnswerRepository>().GetAll();
+            IEnumerable<TestQuestionAnswer> tests = await _unitOfWork.GetRepository<ITestQuestionAnswerRepository>().GetByUserId(getTestQuestionAnswersRequest.UserId);
             result.TestQuestionAnswers = tests.ConvertToViewModel();
 
             return result;
@@ -33,7 +31,7 @@ namespace KnowledgeBase.ApplicationServices.Implementations
         {
             GenerateTestReponse result = new GenerateTestReponse();
 
-            await _unitOfWork.GetRepository<ITestRepository>().GenerateTests();
+            await _unitOfWork.GetRepository<ITestQuestionAnswerRepository>().GenerateTests();
             await _unitOfWork.SaveChangesAsync();
 
             return result;

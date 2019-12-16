@@ -112,7 +112,7 @@ namespace KnowledgeBase.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TestQuestionAnswer",
+                name: "TestQuestionAnswers",
                 columns: table => new
                 {
                     TestId = table.Column<Guid>(nullable: false),
@@ -126,21 +126,21 @@ namespace KnowledgeBase.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TestQuestionAnswer", x => new { x.TestId, x.QuestionId, x.AnswerId });
+                    table.PrimaryKey("PK_TestQuestionAnswers", x => new { x.TestId, x.QuestionId, x.AnswerId });
                     table.ForeignKey(
-                        name: "FK_TestQuestionAnswer_Answers_AnswerId",
+                        name: "FK_TestQuestionAnswers_Answers_AnswerId",
                         column: x => x.AnswerId,
                         principalTable: "Answers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TestQuestionAnswer_Questions_QuestionId",
+                        name: "FK_TestQuestionAnswers_Questions_QuestionId",
                         column: x => x.QuestionId,
                         principalTable: "Questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TestQuestionAnswer_Tests_TestId",
+                        name: "FK_TestQuestionAnswers_Tests_TestId",
                         column: x => x.TestId,
                         principalTable: "Tests",
                         principalColumn: "Id",
@@ -163,13 +163,13 @@ namespace KnowledgeBase.API.Migrations
                 column: "DifficultyLevelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestQuestionAnswer_AnswerId",
-                table: "TestQuestionAnswer",
+                name: "IX_TestQuestionAnswers_AnswerId",
+                table: "TestQuestionAnswers",
                 column: "AnswerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestQuestionAnswer_QuestionId",
-                table: "TestQuestionAnswer",
+                name: "IX_TestQuestionAnswers_QuestionId",
+                table: "TestQuestionAnswers",
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
@@ -193,7 +193,7 @@ namespace KnowledgeBase.API.Migrations
                 table: "Answers");
 
             migrationBuilder.DropTable(
-                name: "TestQuestionAnswer");
+                name: "TestQuestionAnswers");
 
             migrationBuilder.DropTable(
                 name: "UserTest");

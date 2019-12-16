@@ -15,22 +15,22 @@ services:
   locations.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://0.0.0.0:5102
+      - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${Skeleton_AZURE_COSMOSDB:-mongodb://nosql.data}
       - Database=LocationsDb
       - IdentityUrlExternal=http://10.0.75.1:5101
     ports:
-      - "5102:5102"
+      - "5102:80"
 
   knowledgebase.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://0.0.0.0:5103
+      - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${Skeleton_AZURE_IDENTITY_DB:-Server=sql.data;Database=SkeletonOnContainers.Services.KnowledgeBaseDb;User Id=sa;Password=Pass@word}
       - Database=LocationsDb
       - IdentityUrlExternal=http://10.0.75.1:5101
     ports:
-      - "5103:5103"
+      - "5103:80"
 
   status.web:
     environment:
