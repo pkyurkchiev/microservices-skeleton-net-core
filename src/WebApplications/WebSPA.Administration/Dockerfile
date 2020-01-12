@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 # Setup NodeJs
 RUN apt-get update -yq \
     && apt-get install curl gnupg -yq \
@@ -10,7 +10,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 # Setup NodeJs
 RUN apt-get update -yq \
     && apt-get install curl gnupg -yq \

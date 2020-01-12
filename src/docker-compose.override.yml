@@ -49,14 +49,14 @@ services:
     ports:
       - "5110:80"
       
-  webapi.base:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - IdentityUrl=http://identity-api
-    ports:
-      - "5200:80"
-    volumes:
-      - ./ApiGateways/WebSPA.Administration/apigw:/app/configuration
+#  webapi.base:
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Development
+#     - IdentityUrl=http://identity-api
+#    ports:
+#      - "5200:80"
+#    volumes:
+#      - ./ApiGateways/WebSPA.Administration/apigw:/app/configuration
 
   webspa-administration:
     environment:

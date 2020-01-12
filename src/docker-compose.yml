@@ -33,11 +33,11 @@ services:
       context: .
       dockerfile: WebApplications/Status.Web/Dockerfile
       
-  webapi.base:
-    image: skeleton/webapi.base
-    build:
-      context: .
-      dockerfile: ApiGateways/WebAPI.Base/Dockerfile
+#  webapi.base:
+#    image: skeleton/webapi.base
+#    build:
+#      context: .
+#      dockerfile: ApiGateways/WebAPI.Base/Dockerfile
 
   webspa-administration:
     image: skeleton/webspa.administration
