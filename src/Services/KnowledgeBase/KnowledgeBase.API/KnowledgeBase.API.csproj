@@ -20,6 +20,10 @@
     <Compile Remove="Migrations\20191214201335_Initial.Designer.cs" />
     <Compile Remove="Migrations\20191215160010_Initial.cs" />
     <Compile Remove="Migrations\20191215160010_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20191216152759_Initial.cs" />
+    <Compile Remove="Migrations\20191216152759_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20191223171209_Initial.cs" />
+    <Compile Remove="Migrations\20191223171209_Initial.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +39,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc5" />
   </ItemGroup>
 

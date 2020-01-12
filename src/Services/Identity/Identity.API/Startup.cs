@@ -57,7 +57,11 @@ namespace Identity.API
 
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
            
-            services.AddIdentityServer(x => x.IssuerUri = "http://10.0.75.1:5101")
+            services.AddIdentityServer(x => 
+            { 
+                x.IssuerUri = "http://10.0.75.1:5101";
+                x.Authentication.CookieLifetime = TimeSpan.FromHours(2);
+            })
             .AddDeveloperSigningCredential()
             .AddAspNetIdentity<User>()
             .AddProfileService<ProfileService>()

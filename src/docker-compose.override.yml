@@ -1,65 +1,78 @@
 version: '3.6'
 
 services:
-  identity.api:
+  identity-api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://0.0.0.0:80      
-      - SpaClient=http://localhost:5111
-      - ConnectionString=${Skeleton_AZURE_IDENTITY_DB:-Server=sql.data;Database=SkeletonOnContainers.Services.IdentityDb;User Id=sa;Password=Pass@word}
-      - IdentityUrlExternal=http://localhost:5101
-      - LocationApiClient=http://localhost:5102
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${Skeleton_AZURE_IDENTITY_DB:-Server=sql-data;Database=SkeletonOnContainers.Services.IdentityDb;User Id=sa;Password=Pass@word}
+      - IdentityUrlExternal=http://localhost:5101      
+      - SpaAdministrationClient=http://localhost:5111
+      - SpaKnowledgeBaseClient=http://localhost:5112
+      - LocationsApiClient=http://localhost:5102
+      - KnowledgeBaseApiClient=http://localhost:5103
     ports:
       - "5101:80"
 
-  locations.api:
+  locations-api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionString=${Skeleton_AZURE_COSMOSDB:-mongodb://nosql.data}
+      - ConnectionString=${Skeleton_AZURE_COSMOSDB:-mongodb://nosql-data}
       - Database=LocationsDb
-      - IdentityUrlExternal=http://10.0.75.1:5101
+      - IdentityUrl=http://identity-api
+      - IdentityUrlExternal=http://localhost:5101
+      - PATH_BASE=/locations-api
     ports:
       - "5102:80"
 
-  knowledgebase.api:
+  knowledgebase-api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionString=${Skeleton_AZURE_IDENTITY_DB:-Server=sql.data;Database=SkeletonOnContainers.Services.KnowledgeBaseDb;User Id=sa;Password=Pass@word}
-      - Database=LocationsDb
-      - IdentityUrlExternal=http://10.0.75.1:5101
+      - ConnectionString=${Skeleton_AZURE_IDENTITY_DB:-Server=sql-data;Database=SkeletonOnContainers.Services.KnowledgeBaseDb;User Id=sa;Password=Pass@word}
+      - Database=KnowledgeBaseDb
+      - IdentityUrl=http://identity-api
+      - IdentityUrlExternal=http://localhost:5101
+      - PATH_BASE=/knowledgebase-api
     ports:
       - "5103:80"
 
-  status.web:
+  status-web:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - IdentityUrl=http://identity.api/hc
-      - LocationsUrl=http://locations.api/hc
-      - KnowledgeBaseUrl=http://knowledgebase.api/hc
-      - AdministrationSPAUrl=http://webspa.administration
+      - IdentityUrl=http://identity-api/hc
+      - LocationsUrl=http://locations-api/hc
+      - KnowledgeBaseUrl=http://knowledgebase-api/hc
+      - AdministrationSPAUrl=http://webspa-administration
     ports:
       - "5110:80"
       
   webapi.base:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - IdentityUrl=http://identity.api
+      - IdentityUrl=http://identity-api
     ports:
       - "5200:80"
     volumes:
       - ./ApiGateways/WebSPA.Administration/apigw:/app/configuration
 
-  webspa.administration:
+  webspa-administration:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
     ports:
       - "5111:80"
 
-  sql.data:
+  webspa-knowledgebase:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+    ports:
+      - "5112:80"
+
+  sql-data:
     environment:
       - MSSQL_SA_PASSWORD=Pass@word
       - ACCEPT_EULA=Y
@@ -67,11 +80,11 @@ services:
     ports:
       - "5433:1433"
       
-  nosql.data:
+  nosql-data:
     ports:
       - "27017:27017"
 
-  elasticsearch.data:
+  elasticsearch-data:
     ports:
       - "9200:9200"
       - "9300:9300"

@@ -1,0 +1,11 @@
+<div class="container" *ngIf="question">
+  <div class="alert alert-warning" role="alert" [hidden]="!errorReceived">
+    Not possible to create a new user, please try later on
+  </div>
+  <p>{{question.questionText}}</p>
+  <ul class="nav flex-column" *ngFor="let answer of question.answerViewModels; let i = index">
+    <li class="nav-item">
+      <input type="radio" name="answers" id="answer{{i}}" value="{{answer.answerId}}" (click)="MarkAnswer(question.questionId, answer.answerId)" [checked]="answer.markAnswer" /> <label for="answer{{i}}">{{answer.answerText}}</label>
+    </li>
+  </ul>
+</div>

@@ -8,7 +8,10 @@
     {
         [Key]
         public Guid Id { get; set; }
-
+        public Guid? CreateBy { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public Guid? UpdatedBy { get; set; }
+        public DateTime? UpdateOn { get; set; }
         public bool IsDeleted { get; set; }
     }
 }

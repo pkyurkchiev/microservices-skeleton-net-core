@@ -18,8 +18,8 @@ namespace Identity.API.Data
             //callbacks urls from config:
             var clientUrls = new Dictionary<string, string>
             {
-                { "Spa", configuration.GetValue<string>("SpaClient") },
-                //{ "IdentityApi", configuration.GetValue<string>("IdentityApiClient") },
+                { "SpaAdministration", configuration.GetValue<string>("SpaAdministrationClient") },
+                { "SpaKnowledgeBase", configuration.GetValue<string>("SpaKnowledgeBaseClient") },
                 { "LocationsApi", configuration.GetValue<string>("LocationsApiClient") },
                 { "KnowledgeBaseApi", configuration.GetValue<string>("KnowledgeBaseApiClient") }
             };

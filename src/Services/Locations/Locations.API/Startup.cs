@@ -20,6 +20,7 @@ using System.IdentityModel.Tokens.Jwt;
 namespace Locations.API
 {
     using EventBus.RabbitMQ;
+    using Locations.API.Filters;
     using Microsoft.AspNetCore.Http;
     using Microsoft.OpenApi.Models;
     using RabbitMQ.Client;
@@ -89,23 +90,29 @@ namespace Locations.API
                     Type = SecuritySchemeType.OAuth2,
                     Flows = new OpenApiOAuthFlows
                     {
-                        Password = new OpenApiOAuthFlow
+                        Implicit = new OpenApiOAuthFlow()
                         {
+                            AuthorizationUrl = new Uri($"{Configuration.GetValue<string>("IdentityUrlExternal")}/connect/authorize"),
                             TokenUrl = new Uri($"{Configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
-                            Scopes = new Dictionary<string, string>() { { "locations", "Locations API" } }
+                            Scopes = new Dictionary<string, string>()
+                            {
+                                { "locations", "Locations API" }
+                            }
                         }
                     }
                 });
+
+                options.OperationFilter<AuthorizeCheckOperationFilter>();
             });
 
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
+                    builder => builder
+                    .SetIsOriginAllowed((host) => true)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    //.AllowCredentials()
-                    );
+                    .AllowCredentials());
             });
 
             services.AddTransient<ILocationsRepository, LocationsRepository>();
@@ -123,6 +130,12 @@ namespace Locations.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
+            var pathBase = Configuration["PATH_BASE"];
+            if (!string.IsNullOrEmpty(pathBase))
+            {
+                app.UsePathBase(pathBase);
+            }
+
             app.UseCors("CorsPolicy");
 
             app.UseRouting();
@@ -145,7 +158,9 @@ namespace Locations.API
             app.UseSwagger()
               .UseSwaggerUI(c =>
               {
-                  c.SwaggerEndpoint("/swagger/v1/swagger.json", "Locations API V1");
+                  c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Locations.API V1");
+                  c.OAuthClientId("locationsswaggerui");
+                  c.OAuthAppName("Locations Swagger UI");
               });
 
             LocationsContextSeed.SeedAsync(app, loggerFactory)
@@ -164,7 +179,7 @@ namespace Locations.API
             })
             .AddJwtBearer(options =>
             {
-                options.Authority = Configuration.GetValue<string>("IdentityUrlExternal");
+                options.Authority = Configuration.GetValue<string>("IdentityUrl");
                 options.Audience = "locations";
                 options.RequireHttpsMetadata = false;
             });
@@ -212,11 +227,10 @@ namespace Locations.API
                     name: "locations-mongodb-check",
                     tags: new string[] { "mongodb" });
 
-            //hcBuilder
-            //    .AddRabbitMQ(
-            //        $"amqp://{configuration["EventBusConnection"]}",
-            //        name: "locations-rabbitmqbus-check",
-            //        tags: new string[] { "rabbitmqbus" });
+            hcBuilder.AddRabbitMQ(
+                    $"amqp://{configuration["EventBusConnection"]}",
+                    name: "locations-rabbitmqbus-check",
+                    tags: new string[] { "rabbitmqbus" });
 
             return services;
         }

@@ -8,9 +8,9 @@ namespace KnowledgeBase.ApplicationServices.ModelConversions
 {
     public static class ConversionHelper
     {
-        public static TestQuestionAnswerViewModel ConvertToViewModel(this IEnumerable<TestQuestionAnswer> testQuestionAnswers)
+        public static TestDetailViewModel ConvertToViewModel(this IEnumerable<TestDetail> testQuestionAnswers)
         {
-            TestQuestionAnswerViewModel testQuestionAnswerViewModel = new TestQuestionAnswerViewModel();
+            TestDetailViewModel testQuestionAnswerViewModel = new TestDetailViewModel();
 
             QuestionViewModel questionViewModel = new QuestionViewModel();
             List<AnswerViewModel> answerViewModels = new List<AnswerViewModel>();
@@ -19,20 +19,20 @@ namespace KnowledgeBase.ApplicationServices.ModelConversions
             for (int i = 0; i < testQuestionAnswerList.Count(); i++)
             {
                 if (testQuestionAnswerViewModel.Id == Guid.Empty)
-                    testQuestionAnswerViewModel = new TestQuestionAnswerViewModel { Id = testQuestionAnswerList[i].TestId };
+                    testQuestionAnswerViewModel = new TestDetailViewModel { Id = testQuestionAnswerList[i].TestId };
 
                 if (questionViewModel.QuestionId != Guid.Empty && questionViewModel.QuestionId != testQuestionAnswerList[i].QuestionId)
                 {
                     questionViewModel.AnswerViewModels = answerViewModels;
-                    testQuestionAnswerViewModel.QuesitonViewModels.Add(questionViewModel);
+                    testQuestionAnswerViewModel.QuestionViewModels.Add(questionViewModel);
                     answerViewModels = new List<AnswerViewModel>();
                 }
 
-                answerViewModels.Add(new AnswerViewModel { AnswerId = testQuestionAnswerList[i].AnswerId, AnswerText = testQuestionAnswerList[i].AnswerText });
+                answerViewModels.Add(new AnswerViewModel { AnswerId = testQuestionAnswerList[i].AnswerId, AnswerText = testQuestionAnswerList[i].AnswerText, MarkAnswer = testQuestionAnswerList[i].MarkAnswer });
                 if (testQuestionAnswerList.Count() - 1 == i)
                 {
                     questionViewModel.AnswerViewModels = answerViewModels;
-                    testQuestionAnswerViewModel.QuesitonViewModels.Add(questionViewModel);
+                    testQuestionAnswerViewModel.QuestionViewModels.Add(questionViewModel);
                     break;
                 }
                 questionViewModel = new QuestionViewModel { QuestionId = testQuestionAnswerList[i].QuestionId, QuestionText = testQuestionAnswerList[i].QuestionText };

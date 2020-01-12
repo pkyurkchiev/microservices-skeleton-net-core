@@ -10,7 +10,7 @@
         [StringLength(500)]
         public string Text { get; set; }
 
-        public ICollection<TestQuestionAnswer> TestQuestionAnswers { get; set; }
+        public ICollection<TestDetail> TestDetails { get; set; }
 
         #endregion
     }

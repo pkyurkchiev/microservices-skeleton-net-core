@@ -6,7 +6,7 @@
     <ProjectGuid>d5855f7e-3bcc-46ef-a65c-0d1398e87663</ProjectGuid>
     <DockerLaunchBrowser>True</DockerLaunchBrowser>
     <DockerServiceUrl>http://localhost:{ServicePort}/swagger</DockerServiceUrl>
-    <DockerServiceName>identity.api</DockerServiceName>
+    <DockerServiceName>identity-api</DockerServiceName>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
   </PropertyGroup>
   <ItemGroup>

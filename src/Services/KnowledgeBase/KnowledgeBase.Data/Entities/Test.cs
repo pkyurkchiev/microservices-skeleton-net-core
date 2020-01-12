@@ -9,7 +9,7 @@ namespace KnowledgeBase.Data.Entities
         public string Description { get; set; }
 
         public ICollection<UserTest> UserTests { get; set; }
-        public ICollection<TestQuestionAnswer> TestQuestionAnswers { get; set; }
+        public ICollection<TestDetail> TestDetails { get; set; }
 
         #endregion
     }

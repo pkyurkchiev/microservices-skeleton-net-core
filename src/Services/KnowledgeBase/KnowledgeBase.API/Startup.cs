@@ -8,16 +8,17 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Microsoft.Extensions.Hosting;
 
 namespace KnowledgeBase.API
 {
     using EventBus.RabbitMQ;
     using HealthChecks.UI.Client;
+    using KnowledgeBase.API.Filters;
     using KnowledgeBase.ApplicationServices.Implementations;
     using KnowledgeBase.ApplicationServices.Interfaces;
     using KnowledgeBase.Infrastructure;
@@ -106,22 +107,26 @@ namespace KnowledgeBase.API
                     Type = SecuritySchemeType.OAuth2,
                     Flows = new OpenApiOAuthFlows
                     {
-                        Password = new OpenApiOAuthFlow
+                        Implicit = new OpenApiOAuthFlow()
                         {
+                            AuthorizationUrl = new Uri($"{Configuration.GetValue<string>("IdentityUrlExternal")}/connect/authorize"),
                             TokenUrl = new Uri($"{Configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
-                            Scopes = new Dictionary<string, string>() { { "locations", "Locations API" } }
+                            Scopes = new Dictionary<string, string>() { { "knowledgebase", "KnowledgeBase API" } }
                         }
                     }
                 });
+
+                options.OperationFilter<AuthorizeCheckOperationFilter>();
             });
 
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
+                    builder => builder
+                    .SetIsOriginAllowed((host) => true)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    );
+                    .AllowCredentials());
             });
 
             // autofac
@@ -134,6 +139,12 @@ namespace KnowledgeBase.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var pathBase = Configuration["PATH_BASE"];
+            if (!string.IsNullOrEmpty(pathBase))
+            {
+                app.UsePathBase(pathBase);
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -144,9 +155,9 @@ namespace KnowledgeBase.API
                 app.UseHsts();
             }
 
+            app.UseCors("CorsPolicy");
             app.UseRouting();
             ConfigureAuth(app);
-            app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
@@ -165,7 +176,9 @@ namespace KnowledgeBase.API
             app.UseSwagger()
               .UseSwaggerUI(c =>
               {
-                  c.SwaggerEndpoint("/swagger/v1/swagger.json", "KnowledgeBase API V1");
+                  c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "KnowledgeBase.API V1");
+                  c.OAuthClientId("knowledgebaseswaggerui");
+                  c.OAuthAppName("KnowledgeBase Swagger UI");
               });
         }
 
@@ -181,7 +194,7 @@ namespace KnowledgeBase.API
             })
             .AddJwtBearer(options =>
             {
-                options.Authority = Configuration.GetValue<string>("IdentityUrlExternal");
+                options.Authority = Configuration.GetValue<string>("IdentityUrl");
                 options.Audience = "knowledgebase";
                 options.RequireHttpsMetadata = false;
             });
@@ -222,7 +235,7 @@ namespace KnowledgeBase.API
         public static IServiceCollection AddReposiotries(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<ITestRepository, TestRepository>();
-            services.AddScoped<ITestQuestionAnswerRepository, TestQuestionAnswerRepository>();
+            services.AddScoped<ITestDetailRepository, TestDetailRepository>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             return services;
@@ -243,6 +256,11 @@ namespace KnowledgeBase.API
             hcBuilder.AddSqlServer(connectionString: configuration["ConnectionString"],
                    name: "knowledgebase-mssql-check",
                    tags: new string[] { "knowledgeBaseDB", "db", "sql", "mssql" });
+
+            hcBuilder.AddRabbitMQ(
+                    $"amqp://{configuration["EventBusConnection"]}",
+                    name: "knowledgebase-rabbitmqbus-check",
+                    tags: new string[] { "rabbitmqbus" });
 
             return services;
         }

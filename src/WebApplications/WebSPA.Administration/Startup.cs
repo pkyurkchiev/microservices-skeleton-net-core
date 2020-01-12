@@ -29,7 +29,7 @@ namespace WebSPA.Administration
             services.AddHealthChecks()
                     .AddCheck("self", () => HealthCheckResult.Healthy())
                     //.AddUrlGroup(new Uri(Configuration["PurchaseUrlHC"]), name: "purchaseapigw-check", tags: new string[] { "purchaseapigw" })
-                    .AddUrlGroup(new Uri(Configuration["IdentityUrlHC"]), name: "identityapi-check", tags: new string[] { "identityapi" });
+                    .AddUrlGroup(new Uri(Configuration["IdentityUrlHC"]), name: "identity-api-check", tags: new string[] { "identity-api" });
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

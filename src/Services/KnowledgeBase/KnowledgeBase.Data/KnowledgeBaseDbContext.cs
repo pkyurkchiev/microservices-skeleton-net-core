@@ -13,24 +13,24 @@ namespace KnowledgeBase.Data
         public DbSet<Question> Questions { get; set; }
         public DbSet<DifficultyLevel> DifficultyLevels { get; set; }
         public DbSet<Answer> Answers { get; set; }
-        public DbSet<TestQuestionAnswer> TestQuestionAnswers { get; set; }
+        public DbSet<TestDetail> TestDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TestQuestionAnswer>()
+            modelBuilder.Entity<TestDetail>()
                 .HasKey(bc => new { bc.TestId, bc.QuestionId, bc.AnswerId });
-            modelBuilder.Entity<TestQuestionAnswer>()
+            modelBuilder.Entity<TestDetail>()
                 .HasOne(bc => bc.Test)
-                .WithMany(b => b.TestQuestionAnswers)
+                .WithMany(b => b.TestDetails)
                 .HasForeignKey(bc => bc.TestId);
-            modelBuilder.Entity<TestQuestionAnswer>()
+            modelBuilder.Entity<TestDetail>()
                 .HasOne(bc => bc.Question)
-                .WithMany(c => c.TestQuestionAnswers)
+                .WithMany(c => c.TestDetails)
                 .HasForeignKey(bc => bc.QuestionId)
                 .Metadata.DeleteBehavior = DeleteBehavior.Restrict;
-            modelBuilder.Entity<TestQuestionAnswer>()
+            modelBuilder.Entity<TestDetail>()
                 .HasOne(bc => bc.Answer)
-                .WithMany(c => c.TestQuestionAnswers)
+                .WithMany(c => c.TestDetails)
                 .HasForeignKey(bc => bc.AnswerId)
                 .Metadata.DeleteBehavior = DeleteBehavior.Restrict;
 

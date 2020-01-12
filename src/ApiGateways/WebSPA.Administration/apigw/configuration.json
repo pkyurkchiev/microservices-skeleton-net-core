@@ -5,7 +5,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "locations.api",
+          "Host": "locations-api",
           "Port": 80
         }
       ],

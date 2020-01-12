@@ -73,11 +73,26 @@ namespace Identity.API.Data
                 SecurityStamp = Guid.NewGuid().ToString("D")
             };
 
+            User user2 = new User()
+            {
+                Email = "kvestor@microsoft.com",
+                Id = Guid.NewGuid(),
+                FirstName = "KvestorFirstName",
+                LastName = "KvestorLastName",
+                PhoneNumber = "1234567890",
+                UserName = "kvestor",
+                NormalizedEmail = "KVESTOR@MICROSOFT.COM",
+                NormalizedUserName = "KVESTOR",
+                SecurityStamp = Guid.NewGuid().ToString("D")
+            };
+
             user.PasswordHash = _passwordHasher.HashPassword(user, "Pass@word1");
+            user2.PasswordHash = _passwordHasher.HashPassword(user2, "qgodka");
 
             return new List<User>()
             {
-                user
+                user,
+                user2
             };
         }
 

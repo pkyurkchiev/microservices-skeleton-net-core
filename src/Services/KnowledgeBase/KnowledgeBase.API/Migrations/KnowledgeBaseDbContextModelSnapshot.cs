@@ -25,6 +25,12 @@ namespace KnowledgeBase.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -34,6 +40,12 @@ namespace KnowledgeBase.API.Migrations
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(500)")
                         .HasMaxLength(500);
+
+                    b.Property<DateTime?>("UpdateOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -48,12 +60,24 @@ namespace KnowledgeBase.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
+
+                    b.Property<DateTime?>("UpdateOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -69,6 +93,12 @@ namespace KnowledgeBase.API.Migrations
                     b.Property<Guid>("CorrectAnswerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("DifficultyLevelId")
                         .HasColumnType("uniqueidentifier");
 
@@ -78,6 +108,12 @@ namespace KnowledgeBase.API.Migrations
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(500)")
                         .HasMaxLength(500);
+
+                    b.Property<DateTime?>("UpdateOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -94,18 +130,30 @@ namespace KnowledgeBase.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("UpdateOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.ToTable("Tests");
                 });
 
-            modelBuilder.Entity("KnowledgeBase.Data.Entities.TestQuestionAnswer", b =>
+            modelBuilder.Entity("KnowledgeBase.Data.Entities.TestDetail", b =>
                 {
                     b.Property<Guid>("TestId")
                         .HasColumnType("uniqueidentifier");
@@ -119,7 +167,13 @@ namespace KnowledgeBase.API.Migrations
                     b.Property<string>("AnswerText")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<bool>("CorrectAnswer")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("Id")
@@ -128,8 +182,17 @@ namespace KnowledgeBase.API.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("MarkAnswer")
+                        .HasColumnType("bit");
+
                     b.Property<string>("QuestionText")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdateOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("TestId", "QuestionId", "AnswerId");
 
@@ -137,7 +200,7 @@ namespace KnowledgeBase.API.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("TestQuestionAnswers");
+                    b.ToTable("TestDetails");
                 });
 
             modelBuilder.Entity("KnowledgeBase.Data.Entities.User", b =>
@@ -146,6 +209,12 @@ namespace KnowledgeBase.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ExternalId")
                         .IsRequired()
                         .HasColumnType("nvarchar(15)")
@@ -153,6 +222,12 @@ namespace KnowledgeBase.API.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdateOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -196,22 +271,22 @@ namespace KnowledgeBase.API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("KnowledgeBase.Data.Entities.TestQuestionAnswer", b =>
+            modelBuilder.Entity("KnowledgeBase.Data.Entities.TestDetail", b =>
                 {
                     b.HasOne("KnowledgeBase.Data.Entities.Answer", "Answer")
-                        .WithMany("TestQuestionAnswers")
+                        .WithMany("TestDetails")
                         .HasForeignKey("AnswerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("KnowledgeBase.Data.Entities.Question", "Question")
-                        .WithMany("TestQuestionAnswers")
+                        .WithMany("TestDetails")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("KnowledgeBase.Data.Entities.Test", "Test")
-                        .WithMany("TestQuestionAnswers")
+                        .WithMany("TestDetails")
                         .HasForeignKey("TestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
