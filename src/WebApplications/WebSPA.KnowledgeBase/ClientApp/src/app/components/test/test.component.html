@@ -3,7 +3,7 @@
     <app-questions-nav-menu [questions]="questions" (toggle)="toggle($event)"></app-questions-nav-menu>
 
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-      <app-question-answers [question]="question"></app-question-answers>
+      <app-question-answers [question]="question" (makrAnswerEmit)="makrAnswerEmit($event)"></app-question-answers>
     </main>
   </div>
 </div>

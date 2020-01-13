@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 // Models
-import { ITestResponse, IQuestion } from '../../_models/test.response.model';
+import { ITestResponse, IQuestion, IAnswer } from '../../_models/test.response.model';
 
 // Services
 import { ConfigurationService } from '../../_services/configuration.service';
@@ -50,6 +50,20 @@ export class TestComponent implements OnInit {
     this.question = this.testResponse.testDetails.questionViewModels.filter(function (item) {
       return item.questionId === $event.questionId;
     })[0];
+  }
+
+  makrAnswerEmit($event) {
+    this.testResponse.testDetails.questionViewModels.forEach(function (question: IQuestion) {
+      if (question.questionId === $event.questionId) {
+        question.answerViewModels.forEach(function (answer: IAnswer) {
+          if (answer.answerId === $event.answerId)
+            answer.markAnswer = true;
+          else
+            answer.markAnswer = false;
+        });
+        return;
+      }
+    });
   }
 
   private handleError(error: any) {

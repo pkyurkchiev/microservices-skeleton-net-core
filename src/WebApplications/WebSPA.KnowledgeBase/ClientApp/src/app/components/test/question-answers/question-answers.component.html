@@ -1,6 +1,6 @@
 <div class="container" *ngIf="question">
   <div class="alert alert-warning" role="alert" [hidden]="!errorReceived">
-    Not possible to create a new user, please try later on
+    Not possible to mark an answer, please try later
   </div>
   <p>{{question.questionText}}</p>
   <ul class="nav flex-column" *ngFor="let answer of question.answerViewModels; let i = index">

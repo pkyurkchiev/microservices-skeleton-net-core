@@ -19,5 +19,5 @@ export interface IQuestion {
 export interface IAnswer {
   answerId: string,
   answerText: string
-  answerMark: boolean
+  markAnswer: boolean
 }
