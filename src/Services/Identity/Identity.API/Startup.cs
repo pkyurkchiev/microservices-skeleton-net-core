@@ -3,10 +3,12 @@ using Autofac.Extensions.DependencyInjection;
 using HealthChecks.UI.Client;
 using Identity.API.Data;
 using Identity.API.Data.Entities;
+using Identity.API.Extensions;
 using Identity.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -56,9 +58,9 @@ namespace Identity.API
             services.AddTransient<ILoginService<User>, LoginService>();
 
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-           
-            services.AddIdentityServer(x => 
-            { 
+
+            services.AddIdentityServer(x =>
+            {
                 x.IssuerUri = "http://10.0.75.1:5101";
                 x.Authentication.CookieLifetime = TimeSpan.FromHours(2);
             })
@@ -101,7 +103,7 @@ namespace Identity.API
                     Version = "v1",
                     Description = "The Identity Microservice HTTP API. This is a Data-Driven/CRUD microservice sample"
                 });
-                
+
                 options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.OAuth2,
@@ -164,6 +166,11 @@ namespace Identity.API
             app.UseForwardedHeaders();
             // Adds IdentityServer
             app.UseIdentityServer();
+
+            // Fix a problem with chrome. Chrome enabled a new feature "Cookies without SameSite must be secure", 
+            // the coockies shold be expided from https, but in eShop, the internal comunicacion in aks and docker compose is http.
+            // To avoid this problem, the policy of cookies shold be in Lax mode.
+            //app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
             app.UseCors("CorsPolicy");
             app.UseRouting();
             app.UseEndpoints(endpoints =>

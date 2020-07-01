@@ -1,0 +1,99 @@
+version: '3.6'
+
+networks:
+  skeleton-default-external:
+    external: true
+    name: skeleton_default
+
+services:
+  identity-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${Skeleton_AZURE_IDENTITY_DB:-Server=sql-data;Database=SkeletonOnContainers.Services.IdentityDb;User Id=sa;Password=Pass@word}
+      - IdentityUrlExternal=http://localhost:5101      
+      - SpaAdministrationClient=http://localhost:5111
+      - SpaKnowledgeBaseClient=http://localhost:5112
+      - LocationsApiClient=http://localhost:5102
+      - KnowledgeBaseApiClient=http://localhost:5103
+    ports:
+      - "5101:80"
+    networks:
+      - skeleton-default-external
+
+  locations-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${Skeleton_AZURE_COSMOSDB:-mongodb://nosql-data}
+      - Database=LocationsDb
+      - IdentityUrl=http://identity-api
+      - IdentityUrlExternal=http://localhost:5101
+      - PATH_BASE=/locations-api
+    ports:
+      - "5102:80"
+    networks:
+      - skeleton-default-external
+
+  knowledgebase-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${Skeleton_AZURE_IDENTITY_DB:-Server=sql-data;Database=SkeletonOnContainers.Services.KnowledgeBaseDb;User Id=sa;Password=Pass@word}
+      - Database=KnowledgeBaseDb
+      - IdentityUrl=http://identity-api
+      - IdentityUrlExternal=http://localhost:5101
+      - PATH_BASE=/knowledgebase-api
+    ports:
+      - "5103:80"
+    networks:
+      - skeleton-default-external
+
+  status-web:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - IdentityUrl=http://identity-api/hc
+      - LocationsUrl=http://locations-api/hc
+      - KnowledgeBaseUrl=http://knowledgebase-api/hc
+      - AdministrationSPAUrl=http://webspa-administration
+    ports:
+      - "5110:80"
+    networks:
+      - skeleton-default-external
+
+#  webapi.base:
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Development
+#     - IdentityUrl=http://identity-api
+#    ports:
+#      - "5200:80"
+#    volumes:
+#      - ./ApiGateways/WebSPA.Administration/apigw:/app/configuration
+
+  webspa-administration:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+    ports:
+      - "5111:80"
+    networks:
+      - skeleton-default-external
+
+  webspa-knowledgebase:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+    ports:
+      - "5112:80"
+    networks:
+      - skeleton-default-external
+
+#  elasticsearch-data:
+#    ports:
+#      - "9200:9200"
+#      - "9300:9300"
+
+#  kibana:
+#    ports:
+#      - "5601:5601"

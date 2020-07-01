@@ -19,20 +19,15 @@ RUN apt-get update -yq \
 #RUN	npm install -g @angular/cli
 # End setup
 WORKDIR /src
-#COPY *.sln ./
-COPY ["WebApplications/WebSPA.Administration/WebSPA.Administration.csproj", "WebApplications/WebSPA.Administration/"]
-RUN dotnet restore "WebApplications/WebSPA.Administration/WebSPA.Administration.csproj" -nowarn:msb3202,nu1503
-#COPY ["WebApplications/WebSPA.Administration/ClientApp/package.json", "WebApplications/WebSPA.Administration/ClientApp/"]
-#
-#RUN cd WebApplications/WebSPA.Administration/ClientApp \
-    #&& npm i --silent
+COPY ["src/WebApplications/WebSPA.Administration/WebSPA.Administration.csproj", "src/WebApplications/WebSPA.Administration/"]
+RUN dotnet restore "src/WebApplications/WebSPA.Administration/WebSPA.Administration.csproj" -nowarn:msb3202,nu1503
 	
 COPY . .
-WORKDIR "/src/WebApplications/WebSPA.Administration"
-RUN dotnet build "WebSPA.Administration.csproj" -c Release -o /app/build
+WORKDIR "/src/src/WebApplications/WebSPA.Administration"
+RUN dotnet build "src/WebSPA.Administration.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "WebSPA.Administration.csproj" -c Release -o /app/publish
+RUN dotnet publish "src/WebSPA.Administration.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

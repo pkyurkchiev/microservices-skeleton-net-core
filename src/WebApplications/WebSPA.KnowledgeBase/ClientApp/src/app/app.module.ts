@@ -8,6 +8,8 @@ import { AppComponent } from './app.component';
 import { SharedModule } from './_modules/shared.module';
 import { TestModule } from './components/test/test.module';
 
+import { AppService } from './app.service';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -20,7 +22,7 @@ import { TestModule } from './components/test/test.module';
     SharedModule.forRoot(),
     TestModule
   ],
-  providers: [],
+  providers: [AppService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

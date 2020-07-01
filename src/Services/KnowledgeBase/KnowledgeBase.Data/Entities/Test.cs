@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace KnowledgeBase.Data.Entities
 {
@@ -7,6 +8,8 @@ namespace KnowledgeBase.Data.Entities
         #region Properties
 
         public string Description { get; set; }
+        public bool IsFinish { get; set; }
+        public DateTime? FinishedOn { get; set; }
 
         public ICollection<UserTest> UserTests { get; set; }
         public ICollection<TestDetail> TestDetails { get; set; }

@@ -1,0 +1,13 @@
+version: '3.6'
+
+services:
+  ### Common services
+  sql-data:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+
+  nosql-data:
+    image: mongo
+      
+  rabbitmq:
+    image: rabbitmq:3.7-management
+  ### / Common services

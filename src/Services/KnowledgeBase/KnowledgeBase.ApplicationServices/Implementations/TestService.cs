@@ -37,10 +37,27 @@ namespace KnowledgeBase.ApplicationServices.Implementations
             return result;
         }
 
+        public async Task<GetTestResultsResponse> GetTestResults(GetTestResultsRequest getTestResultsRequest)
+        {
+            GetTestResultsResponse result = new GetTestResultsResponse();
+           // IEnumerable<TestDetail> tests = await _unitOfWork.GetRepository<ITestDetailRepository>().GetTestResults(getTestResultsRequest.Id);
+
+            return result;
+        }
+
         public async Task<PutMarkAnswerResponse> PutMarkAswer(PutMarkAnswerRequest putMarkAnswerRequest)
         {
             PutMarkAnswerResponse result = new PutMarkAnswerResponse();
             await _unitOfWork.GetRepository<ITestDetailRepository>().MarkAnswer(putMarkAnswerRequest.TestId, putMarkAnswerRequest.QuestionId, putMarkAnswerRequest.AnswerId);
+            await _unitOfWork.SaveChangesAsync();
+
+            return result;
+        }
+
+        public async Task<PutMarkTestFinishResponse> PutMarkTestFinish(PutMarkTestFinishRequest putMarkTestFinishRequest)
+        {
+            PutMarkTestFinishResponse result = new PutMarkTestFinishResponse();
+            await _unitOfWork.GetRepository<ITestRepository>().MarkTestFinish(putMarkTestFinishRequest.TestId);
             await _unitOfWork.SaveChangesAsync();
 
             return result;

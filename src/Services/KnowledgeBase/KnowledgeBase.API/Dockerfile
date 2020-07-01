@@ -5,13 +5,13 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS buildtime-base
 WORKDIR /src
 
-COPY BuildingBlocks/*/*/*.csproj /csproj-files/
-COPY Services/*/*/*.csproj /csproj-files/
+COPY src/BuildingBlocks/*/*/*.csproj /src/csproj-files/
+COPY src/Services/*/*/*.csproj /src/csproj-files/
 # TODO: Further improve for cache - restore packages here
 
 FROM buildtime-base AS publish
 COPY . .
-WORKDIR /src/Services/KnowledgeBase/KnowledgeBase.API
+WORKDIR /src/src/Services/KnowledgeBase/KnowledgeBase.API
 RUN dotnet publish -c Release -o /app
 
 FROM base AS final

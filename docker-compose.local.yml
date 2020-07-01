@@ -1,6 +1,19 @@
 version: '3.6'
 
 services:
+  sql-data:
+    ports:
+      - "5433:1433"
+
+  nosql-data:
+    ports:
+      - "27017:27017"
+      
+  rabbitmq:
+    ports:
+      - "15672:15672"  # Important: Remove on production environment
+      - "5672:5672"    # Important: Remove on production environment
+
   identity-api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -13,7 +26,9 @@ services:
       - KnowledgeBaseApiClient=http://localhost:5103
     ports:
       - "5101:80"
-
+    depends_on:
+      - sql-data
+      
   locations-api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -25,6 +40,9 @@ services:
       - PATH_BASE=/locations-api
     ports:
       - "5102:80"
+    depends_on:
+      - nosql-data
+      - rabbitmq
 
   knowledgebase-api:
     environment:
@@ -37,6 +55,9 @@ services:
       - PATH_BASE=/knowledgebase-api
     ports:
       - "5103:80"
+    depends_on:
+      - sql-data
+      - rabbitmq
 
   status-web:
     environment:
@@ -48,52 +69,22 @@ services:
       - AdministrationSPAUrl=http://webspa-administration
     ports:
       - "5110:80"
-      
-#  webapi.base:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#     - IdentityUrl=http://identity-api
-#    ports:
-#      - "5200:80"
-#    volumes:
-#      - ./ApiGateways/WebSPA.Administration/apigw:/app/configuration
 
   webspa-administration:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
     ports:
-      - "5111:80"
+      - "5111:80"   
+    depends_on:
+      - identity-api
 
   webspa-knowledgebase:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
     ports:
-      - "5112:80"
-
-  sql-data:
-    environment:
-      - MSSQL_SA_PASSWORD=Pass@word
-      - ACCEPT_EULA=Y
-      - MSSQL_PID=Express
-    ports:
-      - "5433:1433"
-      
-  nosql-data:
-    ports:
-      - "27017:27017"
-
-  elasticsearch-data:
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-
-  kibana:
-    ports:
-      - "5601:5601"
-
-  rabbitmq:
-    ports:
-      - "15672:15672"  # Important: Remove on production environment
-      - "5672:5672"    # Important: Remove on production environment
+      - "5112:80"  
+    depends_on:
+      - identity-api
+      - knowledgebase-api

@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace KnowledgeBase.API.Controllers
 {
     [Authorize]
-    [Produces("application/json")]
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class TestsController : ControllerBase
     {
         private readonly ITestService _testService;
@@ -38,11 +38,26 @@ namespace KnowledgeBase.API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("{testId}/results")]
+        public async Task<IActionResult> GetTestResults([FromRoute] Guid testId)
+        {
+            ServiceResponseBase response = await _testService.GetTestResults(new GetTestResultsRequest(testId));
+            return Ok(response);
+        }
+
         [HttpPut("{testId}/questions/{questionId}/answers/{answerId}/mark")]
         [Produces(typeof(ServiceResponseBase))]
         public async Task<IActionResult> MarkAnswer([FromRoute] Guid testId, [FromRoute] Guid questionId, [FromRoute] Guid answerId)
         {
             ServiceResponseBase response = await _testService.PutMarkAswer(new PutMarkAnswerRequest(testId, questionId, answerId));
+            return Ok(response);
+        }
+
+        [HttpPut("{testId}/finish")]
+        [Produces(typeof(ServiceResponseBase))]
+        public async Task<IActionResult> MarkTestFinish([FromRoute] Guid testId)
+        {
+            ServiceResponseBase response = await _testService.PutMarkTestFinish(new PutMarkTestFinishRequest(testId));
             return Ok(response);
         }
 

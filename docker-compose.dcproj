@@ -10,10 +10,15 @@
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".env" />
     <None Include="docker-compose.override.yml">
+      <DependentUpon>docker-compose.yml</DependentUpon>
+    </None>
+	<None Include="docker-compose.local.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="docker-compose.ci.build.yml" />
   </ItemGroup>
 </Project>

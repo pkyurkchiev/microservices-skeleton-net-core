@@ -1,0 +1,82 @@
+version: '3.6'
+
+services:
+  identity-api:
+    image: skeleton/identity-api
+    build:
+      context: .
+      dockerfile: src/Services/Identity/Identity.API/Dockerfile
+      
+  locations-api:
+    image: skeleton/locations-api
+    build:
+      context: .
+      dockerfile: src/Services/Locations/Locations.API/Dockerfile
+
+  knowledgebase-api:
+    image: skeleton/knowledgebase-api
+    build:
+      context: .
+      dockerfile: src/Services/KnowledgeBase/KnowledgeBase.API/Dockerfile
+
+  status-web:
+    image: skeleton/status-web
+    build:
+      context: .
+      dockerfile: src/WebApplications/Status.Web/Dockerfile
+      
+#  webapi.base:
+#    image: skeleton/webapi.base
+#    build:
+#      context: .
+#      dockerfile: ApiGateways/WebAPI.Base/Dockerfile
+
+  webspa-administration:
+    image: skeleton/webspa-administration
+    build:
+      context: .
+      dockerfile: src/WebApplications/WebSPA.Administration/Dockerfile
+
+  webspa-knowledgebase:
+    image: skeleton/webspa-knowledgebase
+    build:
+      context: .
+      dockerfile: src/WebApplications/WebSPA.KnowledgeBase/Dockerfile
+
+#  sql-data:
+#    image: mcr.microsoft.com/mssql/server:2019-latest
+
+#  nosql-data:
+#    image: mongo
+
+#  elasticsearch-data:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
+#    environment:
+#      - discovery.type=single-node
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#    volumes:
+#      - elasticsearch-data-volume:/usr/share/elasticsearch/data
+#    networks:
+#      - esnet
+
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:7.1.1
+#    depends_on:
+#      - elasticsearch-data
+#    networks:
+#      - esnet
+
+#  rabbitmq:
+#    image: rabbitmq:3.7-management
+
+#volumes:
+#  elasticsearch-data-volume:
+
+#networks:
+#  esnet:
+#    driver: bridge
