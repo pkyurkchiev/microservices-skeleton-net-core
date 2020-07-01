@@ -17,16 +17,16 @@ RUN apt-get update -yq \
     && apt-get install nodejs -yq
 # End setup
 WORKDIR /src
-COPY ["WebApplications/WebSPA.KnowledgeBase/WebSPA.KnowledgeBase.csproj", "WebApplications/WebSPA.KnowledgeBase/"]
-RUN dotnet restore "WebApplications/WebSPA.KnowledgeBase/WebSPA.KnowledgeBase.csproj" -nowarn:msb3202,nu1503
+COPY ["src/WebApplications/WebSPA.KnowledgeBase/WebSPA.KnowledgeBase.csproj", "src/WebApplications/WebSPA.KnowledgeBase/"]
+RUN dotnet restore "src/WebApplications/WebSPA.KnowledgeBase/WebSPA.KnowledgeBase.csproj" -nowarn:msb3202,nu1503
 
 	
 COPY . .
-WORKDIR "/src/WebApplications/WebSPA.KnowledgeBase"
-RUN dotnet build "WebSPA.KnowledgeBase.csproj" -c Release -o /app/build
+WORKDIR "/src/src/WebApplications/WebSPA.KnowledgeBase"
+RUN dotnet build "src/WebSPA.KnowledgeBase.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "WebSPA.KnowledgeBase.csproj" -c Release -o /app/publish
+RUN dotnet publish "src/WebSPA.KnowledgeBase.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
