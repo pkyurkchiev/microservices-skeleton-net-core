@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 import { SecurityService } from './_services/security.service';
 import { ConfigurationService } from './_services/configuration.service';
@@ -17,7 +18,7 @@ export class AppComponent {
   subscription: Subscription;
   errorReceived: boolean;
 
-  constructor(private securityService: SecurityService, private appService: AppService, private configurationService: ConfigurationService, private storageService: StorageService) {
+  constructor(private securityService: SecurityService, private appService: AppService, private configurationService: ConfigurationService, private storageService: StorageService, private router: Router) {
     this.authenticated = this.securityService.IsAuthorized;
   }
 
@@ -67,7 +68,7 @@ export class AppComponent {
     this.appService.putMarkTestFinish(this.storageService.retrieve("testId"))
       .pipe(catchError((err) => this.handleError(err)))
       .subscribe(test => {
-        console.log('test finished');
+        this.router.navigate(['test/' + this.storageService.retrieve("testId")]);
       });
   };
 

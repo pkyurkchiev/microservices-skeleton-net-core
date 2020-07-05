@@ -24,12 +24,6 @@ services:
     build:
       context: .
       dockerfile: src/WebApplications/Status.Web/Dockerfile
-      
-#  webapi.base:
-#    image: skeleton/webapi.base
-#    build:
-#      context: .
-#      dockerfile: ApiGateways/WebAPI.Base/Dockerfile
 
   webspa-administration:
     image: skeleton/webspa-administration
@@ -42,12 +36,6 @@ services:
     build:
       context: .
       dockerfile: src/WebApplications/WebSPA.KnowledgeBase/Dockerfile
-
-#  sql-data:
-#    image: mcr.microsoft.com/mssql/server:2019-latest
-
-#  nosql-data:
-#    image: mongo
 
 #  elasticsearch-data:
 #    image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
@@ -70,9 +58,6 @@ services:
 #      - elasticsearch-data
 #    networks:
 #      - esnet
-
-#  rabbitmq:
-#    image: rabbitmq:3.7-management
 
 #volumes:
 #  elasticsearch-data-volume:

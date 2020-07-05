@@ -1,0 +1,27 @@
+<div role="main" class="container-fluid">
+  <div class="table-responsive">
+    <div class="alert alert-warning esh-orders-alert" role="alert" [hidden]="!errorReceived">
+      Error requesting user list, please try later on
+    </div>
+    <table class="table table-striped table-sm">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Въпроси</th>
+          <th>Маркиран на</th>
+          <th>Отговори</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let question of test?.questionResultViewModels; let i = index">
+          <td>{{i+1}}</td>
+          <td>{{question.questionText}}</td>
+          <td>{{question.markOn}}</td>
+          <td>
+            <div [className]="answer.markAnswer ? (answer.correctAnswer ? 'alert-success' : 'alert-danger') : ''" *ngFor="let answer of question?.answerResultViewModels;">{{answer.answerText}} <span class="font-weight-bold">{{answer.markAnswer ? (answer.correctAnswer ? ' --- Верен' : ' --- Грешен') : (answer.correctAnswer ? ' --- Верен' : '')}}</span></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

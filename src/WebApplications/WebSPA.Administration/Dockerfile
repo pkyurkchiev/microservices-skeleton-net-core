@@ -24,10 +24,10 @@ RUN dotnet restore "src/WebApplications/WebSPA.Administration/WebSPA.Administrat
 	
 COPY . .
 WORKDIR "/src/src/WebApplications/WebSPA.Administration"
-RUN dotnet build "src/WebSPA.Administration.csproj" -c Release -o /app/build
+RUN dotnet build -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "src/WebSPA.Administration.csproj" -c Release -o /app/publish
+RUN dotnet publish -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

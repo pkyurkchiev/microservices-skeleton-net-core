@@ -63,9 +63,9 @@ namespace KnowledgeBase.API.Controllers
 
         [HttpPut("generator")]
         [Produces(typeof(ServiceResponseBase))]
-        public async Task<IActionResult> Generate()
+        public async Task<IActionResult> Generate(string description)
         {
-            ServiceResponseBase response = await _testService.PutGenerateTests(new PutGenerateTestRequest());
+            ServiceResponseBase response = await _testService.PutGenerateTests(new PutGenerateTestRequest(description));
             return Ok(response);
         }
     }

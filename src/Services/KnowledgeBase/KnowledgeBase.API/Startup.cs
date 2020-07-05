@@ -25,6 +25,7 @@ namespace KnowledgeBase.API
     using KnowledgeBase.Infrastructure.Repositories;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.OpenApi.Models;
     using RabbitMQ.Client;
@@ -185,7 +186,7 @@ namespace KnowledgeBase.API
         private void ConfigureAuthService(IServiceCollection services)
         {
             // prevent from mapping "sub" claim to nameidentifier.
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 
             services.AddAuthentication(options =>
             {
@@ -243,7 +244,10 @@ namespace KnowledgeBase.API
 
         public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<ITestService, TestService>();
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             return services;
         }
 

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 
 // Models
-import { ITestResponse, ITest } from '../../_models/test.response.model';
+import { ITestResponse } from '../../_models/test.response.model';
+import { ITestResultResponse } from '../../_models/test-result.response.model';
 
 // Services
 import { DataService } from '../../_services/data.service';
@@ -31,19 +32,18 @@ export class TestService {
     }));
   }
 
-  //getUser(id: string): Observable<IUserDetail> {
-  //  let url = this.identityUrl + '/api/v1/users/' + id;
-
-  //  return this.service.get(url).pipe(map((response: any) => {
-  //    return response;
-  //  }));
-  //}
-
   putAnswerMark(testId: string, questionId: string, answerId): Observable<boolean> {
     let url = this.knowledgeBaseUrl + '/api/v1/tests/' + testId + '/questions/' + questionId + '/answers/' + answerId + '/mark';
 
     return this.service.put(url, null).pipe(map((response: any) => {
       return true;
+    }));
+  }
+
+  getTestResult(testId: string): Observable<ITestResultResponse> {
+    let url = this.knowledgeBaseUrl + '/api/v1/tests/' + testId + '/results';
+    return this.service.get(url).pipe(map((response: any) => {
+      return response;
     }));
   }
 }

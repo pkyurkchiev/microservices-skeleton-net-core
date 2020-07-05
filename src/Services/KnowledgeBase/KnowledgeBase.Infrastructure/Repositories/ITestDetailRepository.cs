@@ -9,7 +9,8 @@ namespace KnowledgeBase.Infrastructure.Repositories
     {
         Task<IList<TestDetail>> GetByUserId(Guid userId);
         Task<IList<TestDetail>> GetByUserExternalId(string userExternalId);
-        Task MarkAnswer(Guid testId, Guid questionId, Guid answerId);
-        Task GenerateTests();
+        Task<IList<TestDetail>> GetTestResults(Guid testId);
+        Task MarkAnswer(Guid testId, Guid questionId, Guid answerId, Guid userId);
+        Task GenerateTests(string description, Guid userId);
     }
 }

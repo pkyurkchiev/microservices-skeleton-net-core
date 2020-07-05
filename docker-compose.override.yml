@@ -62,15 +62,6 @@ services:
     networks:
       - skeleton-default-external
 
-#  webapi.base:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#     - IdentityUrl=http://identity-api
-#    ports:
-#      - "5200:80"
-#    volumes:
-#      - ./ApiGateways/WebSPA.Administration/apigw:/app/configuration
-
   webspa-administration:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development

@@ -17,36 +17,53 @@ namespace KnowledgeBase.Infrastructure.Repositories
         public async Task<IList<TestDetail>> GetByUserId(Guid userId)
         {
             var testDetails = await (from TestDetail in Context.TestDetails
-                                             join test in Context.Tests on TestDetail.TestId equals test.Id
-                                             where test.UserTests.Any(x => x.UserId.Equals(userId))
-                                             select TestDetail).ToListAsync();
+                                     join test in Context.Tests on TestDetail.TestId equals test.Id
+                                     where test.UserTests.Any(x => x.UserId.Equals(userId))
+                                     select TestDetail).ToListAsync();
             return testDetails;
         }
 
         public async Task<IList<TestDetail>> GetByUserExternalId(string userExternalId)
         {
             var testDetails = await (from TestDetail in Context.TestDetails
-                         join test in Context.Tests on TestDetail.TestId equals test.Id
-                         where test.UserTests.Any(x => x.User.ExternalId.Equals(userExternalId))
-                         select TestDetail).ToListAsync();
+                                     join test in Context.Tests on TestDetail.TestId equals test.Id
+                                     where test.UserTests.Any(x => x.User.ExternalId.Equals(userExternalId))
+                                     select TestDetail).ToListAsync();
             return testDetails;
         }
 
-        public async Task MarkAnswer(Guid testId, Guid questionId, Guid answerId)
+        public async Task<IList<TestDetail>> GetTestResults(Guid testId)
+        {
+            var testDetails = await (from TestDetail in Context.TestDetails
+                                     join test in Context.Tests on TestDetail.TestId equals test.Id
+                                     where test.Id == testId
+                                     select TestDetail).ToListAsync();
+            return testDetails;
+        }
+
+
+        public async Task MarkAnswer(Guid testId, Guid questionId, Guid answerId, Guid userId)
         {
             var testDetails = base.DbSet.Where(x => x.TestId == testId && x.QuestionId == questionId);
             foreach (var testDetail in testDetails)
             {
                 if (testDetail.AnswerId == answerId)
+                {
                     testDetail.MarkAnswer = true;
+                    testDetail.UpdatedBy = userId;
+                    testDetail.UpdateOn = DateTime.UtcNow;
+                }
                 else
+                {
                     testDetail.MarkAnswer = false;
+                }
             }
         }
 
-        public async Task GenerateTests()
+        public async Task GenerateTests(string description, Guid userId)
         {
             Guid userIdTemp = new Guid();
+            DateTime dateNow = DateTime.UtcNow;
             using (DbCommand command = Context.Database.GetDbConnection().CreateCommand())
             {
                 command.CommandText = @"SELECT g1.userid                            AS UserId, 
@@ -92,10 +109,10 @@ namespace KnowledgeBase.Infrastructure.Repositories
                     {
                         if (userIdTemp != reader.GetGuid(0))
                         {
-                            test = await this.Context.Tests.AddAsync(new Test());
+                            test = await this.Context.Tests.AddAsync(new Test() { CreateBy = userId, CreatedOn = dateNow });
                             this.Context.Entry(new UserTest { UserId = reader.GetGuid(0), TestId = test.Entity.Id }).State = EntityState.Added;
                         }
-                        this.Context.Entry(new TestDetail { Id = Guid.NewGuid(), TestId = test.Entity.Id, QuestionId = reader.GetGuid(1), QuestionText = reader.GetString(2), AnswerId = reader.GetGuid(3), AnswerText = reader.GetString(4), CorrectAnswer = reader.GetBoolean(6), MarkAnswer = false, CreatedOn = DateTime.UtcNow }).State = EntityState.Added;
+                        this.Context.Entry(new TestDetail { Id = Guid.NewGuid(), TestId = test.Entity.Id, QuestionId = reader.GetGuid(1), QuestionText = reader.GetString(2), AnswerId = reader.GetGuid(3), AnswerText = reader.GetString(4), CorrectAnswer = reader.GetBoolean(6), MarkAnswer = false, CreateBy = userId, CreatedOn = dateNow }).State = EntityState.Added;
 
                         userIdTemp = reader.GetGuid(0);
                     }

@@ -6,7 +6,7 @@ namespace KnowledgeBase.ApplicationServices.ViewModels
     public sealed class TestDetailViewModel
     {
         public Guid Id { get; set; }
-        public string Discription { get; set; }
+        public string Description { get; set; }
         public List<QuestionViewModel> QuestionViewModels { get; set; }
 
         public TestDetailViewModel()

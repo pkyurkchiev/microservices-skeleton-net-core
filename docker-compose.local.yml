@@ -2,6 +2,10 @@ version: '3.6'
 
 services:
   sql-data:
+    environment:
+      - MSSQL_SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
     ports:
       - "5433:1433"
 

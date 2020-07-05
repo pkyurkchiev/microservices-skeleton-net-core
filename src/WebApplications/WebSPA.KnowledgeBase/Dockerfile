@@ -4,6 +4,7 @@ RUN apt-get update -yq \
     && apt-get install curl gnupg -yq \
     && curl -sL https://deb.nodesource.com/setup_10.x | bash \
     && apt-get install nodejs -yq
+#RUN	npm install -g @angular/cli
 # End setup
 WORKDIR /app
 EXPOSE 80
@@ -15,18 +16,18 @@ RUN apt-get update -yq \
     && apt-get install curl gnupg -yq \
     && curl -sL https://deb.nodesource.com/setup_10.x | bash \
     && apt-get install nodejs -yq
+#RUN	npm install -g @angular/cli
 # End setup
 WORKDIR /src
 COPY ["src/WebApplications/WebSPA.KnowledgeBase/WebSPA.KnowledgeBase.csproj", "src/WebApplications/WebSPA.KnowledgeBase/"]
 RUN dotnet restore "src/WebApplications/WebSPA.KnowledgeBase/WebSPA.KnowledgeBase.csproj" -nowarn:msb3202,nu1503
-
 	
 COPY . .
 WORKDIR "/src/src/WebApplications/WebSPA.KnowledgeBase"
-RUN dotnet build "src/WebSPA.KnowledgeBase.csproj" -c Release -o /app/build
+RUN dotnet build -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "src/WebSPA.KnowledgeBase.csproj" -c Release -o /app/publish
+RUN dotnet publish -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, retry } from 'rxjs/operators';
 
 // Models
 import { Guid } from '../_models/guid';
@@ -19,7 +19,7 @@ export class DataService {
         
     return this.http.get(url, options)
         .pipe(
-            // retry(3), // retry a failed request up to 3 times
+            retry(3), // retry a failed request up to 3 times
             map((res: Response) => {
                 return res;
             }),
