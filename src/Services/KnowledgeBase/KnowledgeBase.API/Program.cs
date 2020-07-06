@@ -55,7 +55,7 @@ namespace KnowledgeBase.API
 
         public static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                //.CaptureStartupErrors(false)
+                .CaptureStartupErrors(false)
                 .ConfigureAppConfiguration(x => x.AddConfiguration(configuration))
                 .UseStartup<Startup>()
                 .UseContentRoot(Directory.GetCurrentDirectory())
