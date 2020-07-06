@@ -1,7 +1,7 @@
-﻿using KnowledgeBase.ApplicationServices.Interfaces;
-using KnowledgeBase.ApplicationServices.Messaging;
-using KnowledgeBase.ApplicationServices.Messaging.TestDetails;
-using KnowledgeBase.ApplicationServices.Messaging.Tests;
+﻿using KnowledgeBase.Infrastructure.Interfaces;
+using KnowledgeBase.Infrastructure.Messaging;
+using KnowledgeBase.Infrastructure.Messaging.TestDetails;
+using KnowledgeBase.Infrastructure.Messaging.Tests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;

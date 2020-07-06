@@ -19,10 +19,10 @@ namespace KnowledgeBase.API
     using EventBus.RabbitMQ;
     using HealthChecks.UI.Client;
     using KnowledgeBase.API.Filters;
-    using KnowledgeBase.ApplicationServices.Implementations;
-    using KnowledgeBase.ApplicationServices.Interfaces;
+    using KnowledgeBase.Infrastructure.Implementations;
+    using KnowledgeBase.Infrastructure.Interfaces;
     using KnowledgeBase.Infrastructure;
-    using KnowledgeBase.Infrastructure.Repositories;
+    using KnowledgeBase.Data.Repositories;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Http;
