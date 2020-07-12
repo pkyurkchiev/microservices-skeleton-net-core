@@ -7,6 +7,8 @@ using KnowledgeBase.Infrastructure.ModelConversions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using KnowledgeBase.Data.Entities.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace KnowledgeBase.Infrastructure.Implementations
 {
@@ -14,17 +16,30 @@ namespace KnowledgeBase.Infrastructure.Implementations
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityService _identityService;
+        private readonly ILogger _logger;
 
-        public TestService(IUnitOfWork unitOfWork, IIdentityService identityService)
+        public TestService(IUnitOfWork unitOfWork, IIdentityService identityService, ILogger<TestService> logger)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException("UnitOfWork");
             _identityService = identityService ?? throw new ArgumentNullException("IdentityService");
+            _logger = logger ?? throw new ArgumentNullException("Logger");
         }
 
-        public async Task<GetTestDetailsResponse> GetTestDetailsByUserId(GetTestDetailsRequest getTestDetailsRequest)
+        public async Task<GetTestsResponse> GetTests()
+        {
+            GetTestsResponse result = new GetTestsResponse();
+            string externalUserId = _identityService.GetUserIdentity();
+            _logger.LogInformation("Log user: {externalUserId}", externalUserId);
+            IList<Test> tests = await _unitOfWork.GetRepository<ITestRepository>().GetByUserId(new Guid(externalUserId));
+            result.Tests = tests.ConvertToTestViewModel();
+
+            return result;
+        }
+
+        public async Task<GetTestDetailsResponse> GetTestDetailsByTestId(GetTestDetailsRequest getTestDetailsRequest)
         {
             GetTestDetailsResponse result = new GetTestDetailsResponse();
-            IEnumerable<TestDetail> tests = await _unitOfWork.GetRepository<ITestDetailRepository>().GetByUserId(getTestDetailsRequest.UserId);
+            IEnumerable<TestDetail> tests = await _unitOfWork.GetRepository<ITestDetailRepository>().GetByTestId(getTestDetailsRequest.TestId);
             result.TestDetails = tests.ConvertToViewModel();
 
             return result;
@@ -51,8 +66,8 @@ namespace KnowledgeBase.Infrastructure.Implementations
         public async Task<PutMarkAnswerResponse> PutMarkAswer(PutMarkAnswerRequest putMarkAnswerRequest)
         {
             PutMarkAnswerResponse result = new PutMarkAnswerResponse();
-            Guid userId = new Guid(_identityService.GetUserIdentity());
-            await _unitOfWork.GetRepository<ITestDetailRepository>().MarkAnswer(putMarkAnswerRequest.TestId, putMarkAnswerRequest.QuestionId, putMarkAnswerRequest.AnswerId, userId);
+            Guid externalUserId = new Guid(_identityService.GetUserIdentity());
+            await _unitOfWork.GetRepository<ITestDetailRepository>().MarkAnswer(putMarkAnswerRequest.TestId, putMarkAnswerRequest.QuestionId, putMarkAnswerRequest.AnswerId, externalUserId);
             await _unitOfWork.SaveChangesAsync();
 
             return result;
@@ -61,7 +76,8 @@ namespace KnowledgeBase.Infrastructure.Implementations
         public async Task<PutMarkTestFinishResponse> PutMarkTestFinish(PutMarkTestFinishRequest putMarkTestFinishRequest)
         {
             PutMarkTestFinishResponse result = new PutMarkTestFinishResponse();
-            await _unitOfWork.GetRepository<ITestRepository>().MarkTestFinish(putMarkTestFinishRequest.TestId);
+            var currectAnswers = await _unitOfWork.GetRepository<ITestDetailRepository>().GetByTestId(putMarkTestFinishRequest.TestId);
+            await _unitOfWork.GetRepository<ITestRepository>().MarkTestFinish(putMarkTestFinishRequest.TestId, currectAnswers.Count >= 6 ? ExecutionStatusEnum.Passed : ExecutionStatusEnum.Failed);
             await _unitOfWork.SaveChangesAsync();
 
             return result;
@@ -71,7 +87,7 @@ namespace KnowledgeBase.Infrastructure.Implementations
         {
             PutGenerateTestResponse result = new PutGenerateTestResponse();
             Guid userId = new Guid(_identityService.GetUserIdentity());
-            await _unitOfWork.GetRepository<ITestDetailRepository>().GenerateTests(generateTestRequest.Description, userId);
+            await _unitOfWork.GetRepository<ITestDetailRepository>().GenerateTests(generateTestRequest.DisciplineId, generateTestRequest.Body.Description, userId);
             await _unitOfWork.SaveChangesAsync();
 
             return result;

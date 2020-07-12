@@ -4,14 +4,16 @@ using KnowledgeBase.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace KnowledgeBase.API.Migrations
 {
     [DbContext(typeof(KnowledgeBaseDbContext))]
-    partial class KnowledgeBaseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200711135835_AddDiscipline")]
+    partial class AddDiscipline
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,7 +118,7 @@ namespace KnowledgeBase.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Disciplines");
+                    b.ToTable("Discipline");
                 });
 
             modelBuilder.Entity("KnowledgeBase.Data.Entities.Question", b =>
@@ -135,9 +137,6 @@ namespace KnowledgeBase.API.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("DifficultyLevelId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DisciplineId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
@@ -159,8 +158,6 @@ namespace KnowledgeBase.API.Migrations
 
                     b.HasIndex("DifficultyLevelId");
 
-                    b.HasIndex("DisciplineId");
-
                     b.ToTable("Questions");
                 });
 
@@ -179,10 +176,10 @@ namespace KnowledgeBase.API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("DisciplineId")
+                    b.Property<Guid>("DisciplineId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("ExecutionStatus")
+                    b.Property<int>("ExecutionStatus")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("FinishedOn")
@@ -326,19 +323,15 @@ namespace KnowledgeBase.API.Migrations
                         .HasForeignKey("DifficultyLevelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("KnowledgeBase.Data.Entities.Discipline", "Discipline")
-                        .WithMany()
-                        .HasForeignKey("DisciplineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("KnowledgeBase.Data.Entities.Test", b =>
                 {
                     b.HasOne("KnowledgeBase.Data.Entities.Discipline", "Discipline")
                         .WithMany("Tests")
-                        .HasForeignKey("DisciplineId");
+                        .HasForeignKey("DisciplineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("KnowledgeBase.Data.Entities.TestDetail", b =>

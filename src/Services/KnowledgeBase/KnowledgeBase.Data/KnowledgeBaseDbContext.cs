@@ -5,15 +5,16 @@ namespace KnowledgeBase.Data
 {
     public class KnowledgeBaseDbContext : DbContext
     {
-        public KnowledgeBaseDbContext(DbContextOptions<KnowledgeBaseDbContext> options)
-            : base(options) { }
+        public KnowledgeBaseDbContext(DbContextOptions<KnowledgeBaseDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Test> Tests { get; set; }
+        public DbSet<Discipline> Disciplines { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<DifficultyLevel> DifficultyLevels { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<TestDetail> TestDetails { get; set; }
+        public DbSet<UserTest> UserTests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,7 +34,6 @@ namespace KnowledgeBase.Data
                 .WithMany(c => c.TestDetails)
                 .HasForeignKey(bc => bc.AnswerId)
                 .Metadata.DeleteBehavior = DeleteBehavior.Restrict;
-
 
             modelBuilder.Entity<UserTest>()
                 .HasKey(bc => new { bc.UserId, bc.TestId });

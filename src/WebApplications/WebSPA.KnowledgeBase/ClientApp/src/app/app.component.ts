@@ -1,12 +1,8 @@
 import { Component } from '@angular/core';
-import { Subscription, Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { SecurityService } from './_services/security.service';
 import { ConfigurationService } from './_services/configuration.service';
-import { StorageService } from './_services/storage.service';
-import { AppService } from './app.service';
 
 @Component({
   selector: 'app-root',
@@ -17,8 +13,9 @@ export class AppComponent {
   authenticated: boolean = false;
   subscription: Subscription;
   errorReceived: boolean;
+  testId: string
 
-  constructor(private securityService: SecurityService, private appService: AppService, private configurationService: ConfigurationService, private storageService: StorageService, private router: Router) {
+  constructor(private securityService: SecurityService, private configurationService: ConfigurationService) {
     this.authenticated = this.securityService.IsAuthorized;
   }
 
@@ -61,19 +58,5 @@ export class AppComponent {
   logout() {
     //this.signalrService.stop();
     this.securityService.Logoff();
-  }
-
-  markTestFinish($event) {
-    this.errorReceived = false;
-    this.appService.putMarkTestFinish(this.storageService.retrieve("testId"))
-      .pipe(catchError((err) => this.handleError(err)))
-      .subscribe(test => {
-        this.router.navigate(['test/' + this.storageService.retrieve("testId")]);
-      });
-  };
-
-  private handleError(error: any) {
-    this.errorReceived = true;
-    return Observable.throw(error);
   }
 }

@@ -22,11 +22,19 @@ namespace KnowledgeBase.API.Controllers
             _testService = testService ?? throw new ArgumentNullException("TestService in TestsController");
         }
 
-        [HttpGet("{testId}/users/{userId}")]
+        [HttpGet]
         [Produces(typeof(ServiceResponseBase))]
-        public async Task<IActionResult> GetTestDetailsByUserId([FromRoute] Guid userId, [FromRoute] Guid testId)
+        public async Task<IActionResult> GetTests()
         {
-            ServiceResponseBase response = await _testService.GetTestDetailsByUserId(new GetTestDetailsRequest(userId));
+            ServiceResponseBase response = await _testService.GetTests();
+            return Ok(response);
+        }
+
+        [HttpGet("{testId}")]
+        [Produces(typeof(ServiceResponseBase))]
+        public async Task<IActionResult> GetTestDetailsByUserId([FromRoute] Guid testId)
+        {
+            ServiceResponseBase response = await _testService.GetTestDetailsByTestId(new GetTestDetailsRequest(testId));
             return Ok(response);
         }
 
@@ -61,11 +69,11 @@ namespace KnowledgeBase.API.Controllers
             return Ok(response);
         }
 
-        [HttpPut("generator")]
+        [HttpPut("disciplines/{disciplineId}/generator")]
         [Produces(typeof(ServiceResponseBase))]
-        public async Task<IActionResult> Generate(string description)
+        public async Task<IActionResult> Generate([FromRoute] Guid disciplineId, [FromBody] BodyModel body)
         {
-            ServiceResponseBase response = await _testService.PutGenerateTests(new PutGenerateTestRequest(description));
+            ServiceResponseBase response = await _testService.PutGenerateTests(new PutGenerateTestRequest(disciplineId, body));
             return Ok(response);
         }
     }

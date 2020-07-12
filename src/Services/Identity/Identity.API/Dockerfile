@@ -18,7 +18,6 @@ COPY "src/BuildingBlocks/WebHost/WebHost.Customization/WebHost.Customization.csp
 COPY "src/Services/Identity/Identity.API/Identity.API.csproj" "src/Services/Identity/Identity.API/Identity.API.csproj"
 
 COPY "src/Services/KnowledgeBase/KnowledgeBase.API/KnowledgeBase.API.csproj" "src/Services/KnowledgeBase/KnowledgeBase.API/KnowledgeBase.API.csproj"
-COPY "src/Services/KnowledgeBase/KnowledgeBase.ApplicationServices/KnowledgeBase.ApplicationServices.csproj" "src/Services/KnowledgeBase/KnowledgeBase.ApplicationServices/KnowledgeBase.ApplicationServices.csproj"
 COPY "src/Services/KnowledgeBase/KnowledgeBase.Data/KnowledgeBase.Data.csproj" "src/Services/KnowledgeBase/KnowledgeBase.Data/KnowledgeBase.Data.csproj"
 COPY "src/Services/KnowledgeBase/KnowledgeBase.Infrastructure/KnowledgeBase.Infrastructure.csproj" "src/Services/KnowledgeBase/KnowledgeBase.Infrastructure/KnowledgeBase.Infrastructure.csproj"
 

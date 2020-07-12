@@ -9,9 +9,9 @@ namespace KnowledgeBase.Data.Repositories
 {
     public interface IRepository<T> where T : class , ISoftDelete
     {
-        Task<IEnumerable<T>> GetAll(DeleteStatus DeleteStatus = DeleteStatus.NotDeleted);
+        Task<IEnumerable<T>> GetAll(DeleteStatusEnum DeleteStatus = DeleteStatusEnum.NotDeleted);
 
-        Task<T> GetById(object id, DeleteStatus DeleteStatus = DeleteStatus.NotDeleted);
+        Task<T> GetById(object id, DeleteStatusEnum DeleteStatus = DeleteStatusEnum.NotDeleted);
 
         Task Insert(T entity);
 
@@ -27,6 +27,6 @@ namespace KnowledgeBase.Data.Repositories
 
         void PermanentDelete(T entity);
 
-        Task<IList<T>> Find(Expression<Func<T, bool>> where, DeleteStatus DeleteStatus = DeleteStatus.NotDeleted);
+        Task<IList<T>> Find(Expression<Func<T, bool>> where, DeleteStatusEnum DeleteStatus = DeleteStatusEnum.NotDeleted);
     }
 }

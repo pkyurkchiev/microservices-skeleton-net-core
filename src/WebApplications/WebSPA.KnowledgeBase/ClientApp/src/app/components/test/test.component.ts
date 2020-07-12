@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 
 // Models
-import { ITestResponse, IQuestion, IAnswer } from '../../_models/test.response.model';
+import { ITestDetailsResponse, IQuestionDetails, IAnswerDetails } from '../../_models/test-details.response.model';
 
 // Services
 import { ConfigurationService } from '../../_services/configuration.service';
-import { StorageService } from '../../_services/storage.service';
 import { TestService } from './test.service';
 
 @Component({
@@ -16,30 +16,32 @@ import { TestService } from './test.service';
   styleUrls: ['./test.component.scss']
 })
 export class TestComponent implements OnInit {
-  private testResponse: ITestResponse;
+  private testResponse: ITestDetailsResponse;
   questions: Array<string>;
-  question: IQuestion;
+  question: IQuestionDetails;
   errorReceived: boolean;
 
-  constructor(private testService: TestService, private configurationService: ConfigurationService, private storageService: StorageService) { }
+  constructor(private testService: TestService, private configurationService: ConfigurationService, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    if (this.configurationService.isReady) {
-      this.getTest();
-    } else {
-      this.configurationService.settingsLoaded$.subscribe(x => {
-        this.getTest();
-      });
-    }
+    this.route.params.subscribe(params => {
+      let testId = params['id'];
+      if (this.configurationService.isReady) {
+        this.getTest(testId);
+      } else {
+        this.configurationService.settingsLoaded$.subscribe(x => {
+          this.getTest(testId);
+        });
+      }
+    });
   }
 
-  getTest() {
+  getTest(id: string) {
     this.errorReceived = false;
-    this.testService.getTest()
+    this.testService.getTest(id)
       .pipe(catchError((err) => this.handleError(err)))
       .subscribe(test => {
         this.testResponse = test;
-        this.storageService.store("testId", test.testDetails.id);
         this.questions = test.testDetails.questionViewModels.map(x => x.questionId);
         this.question = test.testDetails.questionViewModels[0];
         console.log('test retrieved');
@@ -53,9 +55,9 @@ export class TestComponent implements OnInit {
   }
 
   makrAnswerEmit($event) {
-    this.testResponse.testDetails.questionViewModels.forEach(function (question: IQuestion) {
+    this.testResponse.testDetails.questionViewModels.forEach(function (question: IQuestionDetails) {
       if (question.questionId === $event.questionId) {
-        question.answerViewModels.forEach(function (answer: IAnswer) {
+        question.answerViewModels.forEach(function (answer: IAnswerDetails) {
           if (answer.answerId === $event.answerId)
             answer.markAnswer = true;
           else

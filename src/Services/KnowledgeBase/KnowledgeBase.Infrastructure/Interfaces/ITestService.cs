@@ -6,7 +6,8 @@ namespace KnowledgeBase.Infrastructure.Interfaces
 {
     public interface ITestService
     {
-        Task<GetTestDetailsResponse> GetTestDetailsByUserId(GetTestDetailsRequest getTestDetailsRequest);
+        Task<GetTestsResponse> GetTests();
+        Task<GetTestDetailsResponse> GetTestDetailsByTestId(GetTestDetailsRequest getTestDetailsRequest);
         Task<GetTestDetailsByUserExternalIdResponse> GetTestDetailsByUserExternalId(GetTestDetailsByUserExternalIdRequest getTestDetailsByUserExternalIdRequest);
         Task<GetTestResultsResponse> GetTestResults(GetTestResultsRequest getTestResultsRequest);
         Task<PutMarkAnswerResponse> PutMarkAswer(PutMarkAnswerRequest putMarkAnswerRequest);

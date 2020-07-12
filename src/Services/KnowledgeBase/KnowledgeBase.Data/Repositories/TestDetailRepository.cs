@@ -1,5 +1,6 @@
-﻿using KnowledgeBase.Data;
-using KnowledgeBase.Data.Entities;
+﻿using KnowledgeBase.Data.Entities;
+using KnowledgeBase.Data.Entities.Enums;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,12 +15,12 @@ namespace KnowledgeBase.Data.Repositories
         public TestDetailRepository(KnowledgeBaseDbContext context) : base(context)
         { }
 
-        public async Task<IList<TestDetail>> GetByUserId(Guid userId)
+        public async Task<IList<TestDetail>> GetByTestId(Guid testId)
         {
-            var testDetails = await (from TestDetail in Context.TestDetails
-                                     join test in Context.Tests on TestDetail.TestId equals test.Id
-                                     where test.UserTests.Any(x => x.UserId.Equals(userId))
-                                     select TestDetail).ToListAsync();
+            var testDetails = await (from testDetail in Context.TestDetails
+                                     join test in Context.Tests on testDetail.TestId equals test.Id
+                                     where test.Id.Equals(testId)
+                                     select testDetail).ToListAsync();
             return testDetails;
         }
 
@@ -42,7 +43,7 @@ namespace KnowledgeBase.Data.Repositories
         }
 
 
-        public async Task MarkAnswer(Guid testId, Guid questionId, Guid answerId, Guid userId)
+        public async Task MarkAnswer(Guid testId, Guid questionId, Guid answerId, Guid externalUserId)
         {
             var testDetails = await base.DbSet.Where(x => x.TestId == testId && x.QuestionId == questionId).ToListAsync();
             foreach (var testDetail in testDetails)
@@ -50,7 +51,7 @@ namespace KnowledgeBase.Data.Repositories
                 if (testDetail.AnswerId == answerId)
                 {
                     testDetail.MarkAnswer = true;
-                    testDetail.UpdatedBy = userId;
+                    testDetail.UpdatedBy = externalUserId;
                     testDetail.UpdateOn = DateTime.UtcNow;
                 }
                 else
@@ -60,7 +61,7 @@ namespace KnowledgeBase.Data.Repositories
             }
         }
 
-        public async Task GenerateTests(string description, Guid userId)
+        public async Task GenerateTests(Guid disciplineId, string description, Guid userId)
         {
             Guid userIdTemp = new Guid();
             DateTime dateNow = DateTime.UtcNow;
@@ -94,22 +95,23 @@ namespace KnowledgeBase.Data.Repositories
                                                                               partition BY u.id 
                                                                               ORDER BY Crypt_gen_random(10) DESC) AS RNO 
                                                                    FROM   users u 
-                                                                          CROSS JOIN questions q) a 
+                                                                          CROSS JOIN (SELECT *FROM questions where DisciplineId = @disciplineId) q) a 
                                                            WHERE  rno <= 5) g1 
                                                        ON ( a2.questionid = g1.questionid ) 
                                                            OR ( g1.correctanswerid = a2.id ) 
                                         ORDER  BY userid, 
                                                   question, 
                                                   Crypt_gen_random(10)";
+                command.Parameters.Add(new SqlParameter("@disciplineId", disciplineId));
                 await Context.Database.OpenConnectionAsync();
                 using (DbDataReader reader = await command.ExecuteReaderAsync())
                 {
-                    Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Test> test = await this.Context.Tests.AddAsync(new Test() { CreateBy = userId, CreatedOn = dateNow, Description = description });
+                    Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Test> test = await this.Context.Tests.AddAsync(new Test() { CreateBy = userId, CreatedOn = dateNow, Description = description, DisciplineId = disciplineId, Status = TestStatusEnum.Created });
                     while (await reader.ReadAsync())
                     {
                         if (userIdTemp != reader.GetGuid(0))
                         {
-                            test = await this.Context.Tests.AddAsync(new Test() { CreateBy = userId, CreatedOn = dateNow, Description = description });
+                            test = await this.Context.Tests.AddAsync(new Test() { CreateBy = userId, CreatedOn = dateNow, Description = description, DisciplineId = disciplineId, Status = TestStatusEnum.Created });
                             this.Context.Entry(new UserTest { UserId = reader.GetGuid(0), TestId = test.Entity.Id }).State = EntityState.Added;
                         }
                         this.Context.Entry(new TestDetail { Id = Guid.NewGuid(), TestId = test.Entity.Id, QuestionId = reader.GetGuid(1), QuestionText = reader.GetString(2), AnswerId = reader.GetGuid(3), AnswerText = reader.GetString(4), CorrectAnswer = reader.GetBoolean(6), MarkAnswer = false, CreateBy = userId, CreatedOn = dateNow }).State = EntityState.Added;

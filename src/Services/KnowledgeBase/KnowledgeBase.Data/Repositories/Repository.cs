@@ -32,14 +32,14 @@ namespace KnowledgeBase.Data.Repositories
 
         #region Methods
 
-        public virtual async Task<IEnumerable<T>> GetAll(DeleteStatus deleteStatus = DeleteStatus.NotDeleted)
+        public virtual async Task<IEnumerable<T>> GetAll(DeleteStatusEnum deleteStatus = DeleteStatusEnum.NotDeleted)
         {
             var query = this.DbSet.AsQueryable();
 
             return await SoftDeleteQueryFilter(query, deleteStatus).ToListAsync();
         }
 
-        public virtual async Task<T> GetById(object id, DeleteStatus deleteStatus = DeleteStatus.NotDeleted)
+        public virtual async Task<T> GetById(object id, DeleteStatusEnum deleteStatus = DeleteStatusEnum.NotDeleted)
         {
             return await this.DbSet.FindAsync(id);
         }
@@ -116,7 +116,7 @@ namespace KnowledgeBase.Data.Repositories
             entry.State = EntityState.Detached;
         }
 
-        public virtual async Task<IList<T>> Find(Expression<Func<T, bool>> where, DeleteStatus deleteStatus = DeleteStatus.NotDeleted)
+        public virtual async Task<IList<T>> Find(Expression<Func<T, bool>> where, DeleteStatusEnum deleteStatus = DeleteStatusEnum.NotDeleted)
         {
             var query = this.DbSet.Where(where);
             return await SoftDeleteQueryFilter(query, deleteStatus).ToListAsync();
@@ -126,13 +126,13 @@ namespace KnowledgeBase.Data.Repositories
 
         #region Private Methods
 
-        private IQueryable<T> SoftDeleteQueryFilter(IQueryable<T> query, DeleteStatus deleteStatus)
+        private IQueryable<T> SoftDeleteQueryFilter(IQueryable<T> query, DeleteStatusEnum deleteStatus)
         {
-            if (deleteStatus == DeleteStatus.NotDeleted)
+            if (deleteStatus == DeleteStatusEnum.NotDeleted)
             {
                 query = query.Where(x => !x.IsDeleted);
             }
-            else if (deleteStatus == DeleteStatus.Deleted)
+            else if (deleteStatus == DeleteStatusEnum.Deleted)
             {
                 query = query.Where(x => x.IsDeleted);
             }

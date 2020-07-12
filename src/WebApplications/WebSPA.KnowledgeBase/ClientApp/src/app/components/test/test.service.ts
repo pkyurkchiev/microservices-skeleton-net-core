@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 // Models
 import { ITestResponse } from '../../_models/test.response.model';
+import { ITestDetailsResponse } from '../../_models/test-details.response.model';
 import { ITestResultResponse } from '../../_models/test-result.response.model';
 
 // Services
@@ -24,8 +25,16 @@ export class TestService {
       this.configurationService.settingsLoaded$.subscribe(x => this.knowledgeBaseUrl = this.configurationService.serverSettings.knowledgeBaseUrl);
   }
 
-  getTest(): Observable<ITestResponse> {
-    let url = this.knowledgeBaseUrl + '/api/v1/tests/users/' + '1701327001';
+  getTests(): Observable<ITestResponse>  {
+    let url = this.knowledgeBaseUrl + '/api/v1/tests/';
+
+    return this.service.get(url).pipe(map((response: any) => {
+      return response;
+    }));
+  }
+
+  getTest(id: string): Observable<ITestDetailsResponse> {
+    let url = this.knowledgeBaseUrl + '/api/v1/tests/' + id;
 
     return this.service.get(url).pipe(map((response: any) => {
       return response;
@@ -40,10 +49,18 @@ export class TestService {
     }));
   }
 
-  getTestResult(testId: string): Observable<ITestResultResponse> {
-    let url = this.knowledgeBaseUrl + '/api/v1/tests/' + testId + '/results';
+  getTestResult(id: string): Observable<ITestResultResponse> {
+    let url = this.knowledgeBaseUrl + '/api/v1/tests/' + id + '/results';
     return this.service.get(url).pipe(map((response: any) => {
       return response;
     }));
   }
+
+  putMarkTestFinish(testId: string): Observable<boolean> {
+    let url = this.knowledgeBaseUrl + '/api/v1/tests/' + testId + '/finish';
+
+    return this.service.put(url, null).pipe(map((response: any) => {
+      return true;
+    }));
+  };
 }

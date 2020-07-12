@@ -6,7 +6,7 @@ namespace KnowledgeBase.Infrastructure.Implementations
 {
     public class IdentityService : ApplicationServiceBase, IIdentityService
     {
-        private IHttpContextAccessor _context;
+        private readonly IHttpContextAccessor _context;
 
         public IdentityService(IHttpContextAccessor context)
         {

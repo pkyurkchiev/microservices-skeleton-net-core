@@ -1,5 +1,5 @@
 export interface ITestResponse {
-  testDetails: ITest
+  tests: Array<ITest>
   statusCode: number,
   statusDescription: string
 }
@@ -7,17 +7,6 @@ export interface ITestResponse {
 export interface ITest {
   id: string,
   description: string,
-  questionViewModels: Array<IQuestion>
-}
-
-export interface IQuestion {
-  questionId: string,
-  questionText: string,
-  answerViewModels: Array<IAnswer>
-}
-
-export interface IAnswer {
-  answerId: string,
-  answerText: string
-  markAnswer: boolean
+  status: string,
+  finishedOn: string  
 }

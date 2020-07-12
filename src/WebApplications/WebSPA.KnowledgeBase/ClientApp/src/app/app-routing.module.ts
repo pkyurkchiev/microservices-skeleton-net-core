@@ -13,8 +13,8 @@ import { TestResultComponent } from './components/test/test-result/test-result.c
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'test', component: TestComponent, canActivate: [AuthGuardService] },
-  { path: 'test/:id', component: TestResultComponent, canActivate: [AuthGuardService] },
+  { path: 'tests/:id', component: TestComponent, canActivate: [AuthGuardService] },
+  { path: 'tests/:id/results', component: TestResultComponent, canActivate: [AuthGuardService] },
   { path: 'page-not-found', component: PageNotFoundComponent },
   { path: '**', redirectTo: 'page-not-found' }
 ];

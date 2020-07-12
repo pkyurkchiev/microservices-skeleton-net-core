@@ -1,11 +1,13 @@
-import { Component, OnInit, OnChanges, Output, Input, EventEmitter } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 // Models
-import { IIdentity } from '../../_models/identity.model';
+import { ITest } from '../../_models/test.response.model';
 
 // Services
-import { SecurityService } from '../../_services/security.service';
+import { ConfigurationService } from '../../_services/configuration.service';
+import { TestService } from '../test/test.service';
 
 @Component({
   selector: 'app-home',
@@ -13,14 +15,34 @@ import { SecurityService } from '../../_services/security.service';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  private tests: Array<ITest>;
   authenticated: boolean = false;
-  private subscription: Subscription;
-  private userName: string = '';
+  errorReceived: boolean;
 
-  constructor(private securityService: SecurityService) {
-
+  constructor(private testService: TestService, private configurationService: ConfigurationService) {
+    if (this.configurationService.isReady) {
+      this.getTests();
+    } else {
+      this.configurationService.settingsLoaded$.subscribe(x => {
+        this.getTests();
+      });
+    }
   }
 
   ngOnInit() { }
-    
+
+  getTests() {
+    this.errorReceived = false;
+    this.testService.getTests()
+      .pipe(catchError((err) => this.handleError(err)))
+      .subscribe(response => {
+        this.tests = response.tests;
+        console.log('test retrieved');
+      });
+  }
+
+  private handleError(error: any) {
+    this.errorReceived = true;
+    return Observable.throw(error);
+  }
 }

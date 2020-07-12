@@ -1,12 +1,21 @@
-﻿namespace KnowledgeBase.Infrastructure.Messaging.Tests
+﻿using System;
+
+namespace KnowledgeBase.Infrastructure.Messaging.Tests
 {
     public class PutGenerateTestRequest : ServiceRequestBase
     {
-        public string Description { get; set; }
+        public Guid DisciplineId { get; set; }
+        public BodyModel Body { get; set; }
 
-        public PutGenerateTestRequest(string description)
+        public PutGenerateTestRequest(Guid disciplineId, BodyModel body)
         {
-            Description = description;
+            DisciplineId = disciplineId;
+            Body = body;
         }
+    }
+
+    public class BodyModel
+    {
+        public string Description { get; set; }
     }
 }
