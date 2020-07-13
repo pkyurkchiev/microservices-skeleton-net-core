@@ -4,11 +4,8 @@
 **/.gitignore
 **/.vs
 **/.vscode
+*.md
 **/*.*proj.user
-**/azds.yaml
-**/charts
-**/bin
-**/obj
 **/Dockerfile
 **/Dockerfile.develop
 **/docker-compose.yml
@@ -19,4 +16,10 @@
 **/values.dev.yaml
 **/.toolstarget
 
-*/node_modules
+**/bin/
+**/obj/
+**/node_modules/
+**/bower_components/
+**/wwwroot/lib/
+
+src/WebApplications/WebSPA.KnowledgeBase/wwwroot/

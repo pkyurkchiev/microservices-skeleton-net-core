@@ -15,7 +15,7 @@ import { TestService } from '../test/test.service';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  private tests: Array<ITest>;
+  tests: Array<ITest>;
   authenticated: boolean = false;
   errorReceived: boolean;
 

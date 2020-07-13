@@ -17,7 +17,7 @@ import { TestService } from '../test.service';
   styleUrls: ['./test-result.component.scss']
 })
 export class TestResultComponent implements OnInit {
-  private test: ITestResult;
+  test: ITestResult;
   errorReceived: boolean;
 
   constructor(private testService: TestService, private configurationService: ConfigurationService, private route: ActivatedRoute) { }
