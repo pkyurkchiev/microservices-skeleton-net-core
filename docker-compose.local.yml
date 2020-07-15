@@ -20,7 +20,7 @@ services:
 
   identity-api:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${Skeleton_AZURE_IDENTITY_DB:-Server=sql-data;Database=SkeletonOnContainers.Services.IdentityDb;User Id=sa;Password=Pass@word}
       - IdentityUrlExternal=http://localhost:5101      
@@ -85,7 +85,7 @@ services:
 
   webspa-knowledgebase:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://0.0.0.0:80
     ports:
       - "5112:80"  
