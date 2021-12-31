@@ -30,6 +30,8 @@ namespace KnowledgeBase.API
     using Microsoft.OpenApi.Models;
     using RabbitMQ.Client;
     using System.IdentityModel.Tokens.Jwt;
+    using KnowledgeBase.API.Infrastructure.IntegrationEvents.EventHandling;
+    using EventBus.Events;
 
     public class Startup
     {
@@ -181,6 +183,16 @@ namespace KnowledgeBase.API
                   c.OAuthClientId("knowledgebaseswaggerui");
                   c.OAuthAppName("KnowledgeBase Swagger UI");
               });
+
+            ConfigureEventBus(app);
+        }
+
+        private void ConfigureEventBus(IApplicationBuilder app)
+        {
+            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+
+            eventBus.Subscribe<CreateUserIntegrationEvent, CreateUserIntegrationEventHandler>();
+
         }
 
         private void ConfigureAuthService(IServiceCollection services)
@@ -222,6 +234,8 @@ namespace KnowledgeBase.API
             });
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
+
+            services.AddTransient<CreateUserIntegrationEventHandler>();
         }
 
         protected virtual void ConfigureAuth(IApplicationBuilder app)

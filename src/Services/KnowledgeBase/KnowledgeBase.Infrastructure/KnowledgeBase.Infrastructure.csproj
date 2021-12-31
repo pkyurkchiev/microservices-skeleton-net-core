@@ -11,14 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="IntegrationEvents\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\EventMQ\EventBus.Events\EventBus.Events.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\EventMQ\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\KnowledgeBase.Data\KnowledgeBase.Data.csproj" />
   </ItemGroup>
 

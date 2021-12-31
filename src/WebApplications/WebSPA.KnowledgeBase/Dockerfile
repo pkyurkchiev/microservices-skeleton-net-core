@@ -5,8 +5,6 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-#COPY src/WebApplications/WebSPA.KnowledgeBase/ClientApp/package.json .
-#COPY src/WebApplications/WebSPA.KnowledgeBase/ClientApp/package-lock.json .
 COPY src/WebApplications/WebSPA.KnowledgeBase/ClientApp .
 RUN npm i npm@latest -g && npm update && npm install && npm run build:prod
 
@@ -19,6 +17,7 @@ WORKDIR /src
 COPY "src/SkeletonOnContainers.sln" "src/SkeletonOnContainers.sln"
 
 COPY "src/BuildingBlocks/EventMQ/EventBus/EventBus.csproj" "src/BuildingBlocks/EventMQ/EventBus/EventBus.csproj"
+COPY "src/BuildingBlocks/EventMQ/EventBus.Events/EventBus.Events.csproj" "src/BuildingBlocks/EventMQ/EventBus.Events/EventBus.Events.csproj"
 COPY "src/BuildingBlocks/EventMQ/EventBusRabbitMQ/EventBus.RabbitMQ.csproj" "src/BuildingBlocks/EventMQ/EventBusRabbitMQ/EventBus.RabbitMQ.csproj"
 COPY "src/BuildingBlocks/WebHost/WebHost.Customization/WebHost.Customization.csproj" "src/BuildingBlocks/WebHost/WebHost.Customization/WebHost.Customization.csproj"
 

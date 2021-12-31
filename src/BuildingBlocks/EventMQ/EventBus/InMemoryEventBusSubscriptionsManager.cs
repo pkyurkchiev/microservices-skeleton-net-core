@@ -3,15 +3,11 @@ using EventBus.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace EventBus
 {
     public partial class InMemoryEventBusSubscriptionsManager : IEventBusSubscriptionsManager
     {
-
-
         private readonly Dictionary<string, List<SubscriptionInfo>> _handlers;
         private readonly List<Type> _eventTypes;
 
@@ -37,8 +33,13 @@ namespace EventBus
             where TH : IIntegrationEventHandler<T>
         {
             var eventName = GetEventKey<T>();
+
             DoAddSubscription(typeof(TH), eventName, isDynamic: false);
-            _eventTypes.Add(typeof(T));
+
+            if (!_eventTypes.Contains(typeof(T)))
+            {
+                _eventTypes.Add(typeof(T));
+            }
         }
 
         private void DoAddSubscription(Type handlerType, string eventName, bool isDynamic)
@@ -112,10 +113,7 @@ namespace EventBus
         private void RaiseOnEventRemoved(string eventName)
         {
             var handler = OnEventRemoved;
-            if (handler != null)
-            {
-                OnEventRemoved(this, eventName);
-            }
+            handler?.Invoke(this, eventName);
         }
 
 

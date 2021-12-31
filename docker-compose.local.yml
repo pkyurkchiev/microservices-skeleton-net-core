@@ -32,6 +32,7 @@ services:
       - "5101:80"
     depends_on:
       - sql-data
+      - rabbitmq
       
   locations-api:
     environment:

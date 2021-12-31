@@ -10,6 +10,7 @@ WORKDIR /src
 COPY "src/SkeletonOnContainers.sln" "src/SkeletonOnContainers.sln"
 
 COPY "src/BuildingBlocks/EventMQ/EventBus/EventBus.csproj" "src/BuildingBlocks/EventMQ/EventBus/EventBus.csproj"
+COPY "src/BuildingBlocks/EventMQ/EventBus.Events/EventBus.Events.csproj" "src/BuildingBlocks/EventMQ/EventBus.Events/EventBus.Events.csproj"
 COPY "src/BuildingBlocks/EventMQ/EventBusRabbitMQ/EventBus.RabbitMQ.csproj" "src/BuildingBlocks/EventMQ/EventBusRabbitMQ/EventBus.RabbitMQ.csproj"
 COPY "src/BuildingBlocks/WebHost/WebHost.Customization/WebHost.Customization.csproj" "src/BuildingBlocks/WebHost/WebHost.Customization/WebHost.Customization.csproj"
 
