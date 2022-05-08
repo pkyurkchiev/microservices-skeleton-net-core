@@ -84,6 +84,41 @@ namespace KnowledgeBase.API.Migrations
                     b.ToTable("DifficultyLevels");
                 });
 
+            modelBuilder.Entity("KnowledgeBase.Data.Entities.Discipline", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(300)")
+                        .HasMaxLength(300);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
+
+                    b.Property<DateTime?>("UpdateOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Disciplines");
+                });
+
             modelBuilder.Entity("KnowledgeBase.Data.Entities.Question", b =>
                 {
                     b.Property<Guid>("Id")
@@ -100,6 +135,9 @@ namespace KnowledgeBase.API.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("DifficultyLevelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DisciplineId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
@@ -121,6 +159,8 @@ namespace KnowledgeBase.API.Migrations
 
                     b.HasIndex("DifficultyLevelId");
 
+                    b.HasIndex("DisciplineId");
+
                     b.ToTable("Questions");
                 });
 
@@ -139,14 +179,20 @@ namespace KnowledgeBase.API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("DisciplineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("ExecutionStatus")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("FinishedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsFinish")
-                        .HasColumnType("bit");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdateOn")
                         .HasColumnType("datetime2");
@@ -155,6 +201,8 @@ namespace KnowledgeBase.API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DisciplineId");
 
                     b.ToTable("Tests");
                 });
@@ -221,7 +269,10 @@ namespace KnowledgeBase.API.Migrations
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ExternalId")
+                    b.Property<Guid>("ExternalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FacultyNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(15)")
                         .HasMaxLength(15);
@@ -252,7 +303,7 @@ namespace KnowledgeBase.API.Migrations
 
                     b.HasIndex("TestId");
 
-                    b.ToTable("UserTest");
+                    b.ToTable("UserTests");
                 });
 
             modelBuilder.Entity("KnowledgeBase.Data.Entities.Answer", b =>
@@ -275,6 +326,19 @@ namespace KnowledgeBase.API.Migrations
                         .HasForeignKey("DifficultyLevelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("KnowledgeBase.Data.Entities.Discipline", "Discipline")
+                        .WithMany()
+                        .HasForeignKey("DisciplineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("KnowledgeBase.Data.Entities.Test", b =>
+                {
+                    b.HasOne("KnowledgeBase.Data.Entities.Discipline", "Discipline")
+                        .WithMany("Tests")
+                        .HasForeignKey("DisciplineId");
                 });
 
             modelBuilder.Entity("KnowledgeBase.Data.Entities.TestDetail", b =>

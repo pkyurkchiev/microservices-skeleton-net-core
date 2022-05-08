@@ -12,5 +12,5 @@ services:
     image: mongo
       
   rabbitmq:
-    image: rabbitmq:3.7-management
+    image: rabbitmq:3.8.5-management-alpine
   ### / Common services

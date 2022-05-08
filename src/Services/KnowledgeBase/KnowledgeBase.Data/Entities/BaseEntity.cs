@@ -1,9 +1,9 @@
-﻿namespace KnowledgeBase.Data.Entities
-{
-    using System.ComponentModel.DataAnnotations;
-    using Interfaces;
-    using System;
+﻿using KnowledgeBase.Data.Entities.Interfaces;
+using System;
+using System.ComponentModel.DataAnnotations;
 
+namespace KnowledgeBase.Data.Entities
+{
     public abstract class BaseEntity : ISoftDelete
     {
         [Key]

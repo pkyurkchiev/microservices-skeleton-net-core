@@ -10,6 +10,7 @@
 
     <!-- Set this to true if you enable server-side prerendering -->
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
+    <UserSecretsId>5d938e73-633c-4405-8b85-66a78cebae43</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,9 +41,9 @@
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr -- --prod" Condition=" '$(BuildServerSideRenderer)' == 'true' " />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" Condition=" '$(BuildingDocker)' == '' " />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod" Condition=" '$(BuildingDocker)' == '' " />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr -- --prod" Condition=" '$(BuildServerSideRenderer)' == 'true' And '$(BuildingDocker)' == '' " />
 
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>

@@ -19,16 +19,19 @@ namespace KnowledgeBase.API
     using EventBus.RabbitMQ;
     using HealthChecks.UI.Client;
     using KnowledgeBase.API.Filters;
-    using KnowledgeBase.ApplicationServices.Implementations;
-    using KnowledgeBase.ApplicationServices.Interfaces;
+    using KnowledgeBase.Infrastructure.Implementations;
+    using KnowledgeBase.Infrastructure.Interfaces;
     using KnowledgeBase.Infrastructure;
-    using KnowledgeBase.Infrastructure.Repositories;
+    using KnowledgeBase.Data.Repositories;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.OpenApi.Models;
     using RabbitMQ.Client;
     using System.IdentityModel.Tokens.Jwt;
+    using KnowledgeBase.API.Infrastructure.IntegrationEvents.EventHandling;
+    using EventBus.Events;
 
     public class Startup
     {
@@ -180,12 +183,22 @@ namespace KnowledgeBase.API
                   c.OAuthClientId("knowledgebaseswaggerui");
                   c.OAuthAppName("KnowledgeBase Swagger UI");
               });
+
+            ConfigureEventBus(app);
+        }
+
+        private void ConfigureEventBus(IApplicationBuilder app)
+        {
+            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+
+            eventBus.Subscribe<CreateUserIntegrationEvent, CreateUserIntegrationEventHandler>();
+
         }
 
         private void ConfigureAuthService(IServiceCollection services)
         {
             // prevent from mapping "sub" claim to nameidentifier.
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 
             services.AddAuthentication(options =>
             {
@@ -221,6 +234,8 @@ namespace KnowledgeBase.API
             });
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
+
+            services.AddTransient<CreateUserIntegrationEventHandler>();
         }
 
         protected virtual void ConfigureAuth(IApplicationBuilder app)
@@ -243,7 +258,10 @@ namespace KnowledgeBase.API
 
         public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<ITestService, TestService>();
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             return services;
         }
 

@@ -1,9 +1,11 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using EventBus;
+using EventBus.Abstractions;
+using EventBus.RabbitMQ;
 using HealthChecks.UI.Client;
 using Identity.API.Data;
 using Identity.API.Data.Entities;
-using Identity.API.Extensions;
 using Identity.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -17,6 +19,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -49,13 +52,10 @@ namespace Identity.API
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddHealthChecks()
-               .AddCheck("self", () => HealthCheckResult.Healthy())
-               .AddSqlServer(connectionString: Configuration["ConnectionString"],
-                   name: "identity-mssql-check",
-                   tags: new string[] { "IdentityDB", "db", "sql", "mssql" });
+            services.AddCustomHealthCheck(Configuration);
 
-            services.AddTransient<ILoginService<User>, LoginService>();
+            services.AddTransient<ILoginService<User>, LoginService>()
+                    .AddTransient<IRedirectService, RedirectService>();
 
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
@@ -117,7 +117,8 @@ namespace Identity.API
                     }
                 });
             });
-
+            services.AddCustomIntegrations(Configuration)
+                    .AddEventBus(Configuration);
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -159,7 +160,7 @@ namespace Identity.API
             // Make work identity server redirections in Edge and lastest versions of browers. WARN: Not valid in a production environment.
             //app.Use(async (context, next) =>
             //{
-            //    context.Response.Headers.Add("Content-Security-Policy", "script-src 'unsafe-inline'");
+            //    context.Response.Headers.Add("Content-Security-Policy", "script-src 'self' https://ajax.aspnetcdn.com http://localhost:5101; 'nonce-1LCV8O37L47QVufyugd6rqoebY+OAQGq8iajMbdy3B8=' 'nonce-1LCV8O37L47QVufyugd6rqoebY+OAQGq8iajMbdy3B9='");
             //    await next();
             //});
 
@@ -167,10 +168,11 @@ namespace Identity.API
             // Adds IdentityServer
             app.UseIdentityServer();
 
+
             // Fix a problem with chrome. Chrome enabled a new feature "Cookies without SameSite must be secure", 
             // the coockies shold be expided from https, but in eShop, the internal comunicacion in aks and docker compose is http.
             // To avoid this problem, the policy of cookies shold be in Lax mode.
-            //app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
+            app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
             app.UseCors("CorsPolicy");
             app.UseRouting();
             app.UseEndpoints(endpoints =>
@@ -193,6 +195,92 @@ namespace Identity.API
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Identity API V1");
                 });
+        }
+    }
+
+    public static class CustomExtensionMethods
+    {
+        public static IServiceCollection AddCustomIntegrations(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
+
+                var factory = new ConnectionFactory()
+                {
+                    HostName = configuration["EventBusConnection"],
+                    DispatchConsumersAsync = true
+                };
+
+                if (!string.IsNullOrEmpty(configuration["EventBusUserName"]))
+                {
+                    factory.UserName = configuration["EventBusUserName"];
+                }
+
+                if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
+                {
+                    factory.Password = configuration["EventBusPassword"];
+                }
+                if (!string.IsNullOrEmpty(configuration["EventBusPort"]))
+                {
+                    factory.Port = int.Parse(configuration["EventBusPort"]);
+                }
+
+                var retryCount = 5;
+                if (!string.IsNullOrEmpty(configuration["EventBusRetryCount"]))
+                {
+                    retryCount = int.Parse(configuration["EventBusRetryCount"]);
+                }
+
+                return new DefaultRabbitMQPersistentConnection(factory, logger, retryCount);
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
+        {
+            var subscriptionClientName = configuration["SubscriptionClientName"];
+
+            services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
+            {
+                var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQPersistentConnection>();
+                var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
+                var logger = sp.GetRequiredService<ILogger<EventBusRabbitMQ>>();
+                var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
+
+                var retryCount = 5;
+                if (!string.IsNullOrEmpty(configuration["EventBusRetryCount"]))
+                {
+                    retryCount = int.Parse(configuration["EventBusRetryCount"]);
+                }
+
+                return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
+            });
+
+            services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
+
+            //services.AddTransient<CompanyAssetCloudConvertProcessIntegrationEventHandler>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
+        {
+            var hcBuilder = services.AddHealthChecks();
+
+            hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
+
+            hcBuilder.AddSqlServer(connectionString: configuration["ConnectionString"],
+                   name: "identity-mssql-check",
+                   tags: new string[] { "IdentityDB", "db", "sql", "mssql" });
+
+            hcBuilder.AddRabbitMQ(
+                    $"amqp://{configuration["EventBusConnection"]}",
+                    name: "identity-rabbitmqbus-check",
+                    tags: new string[] { "rabbitmqbus" });
+
+            return services;
         }
     }
 }

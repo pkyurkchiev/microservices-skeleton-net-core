@@ -1,7 +1,7 @@
-﻿using KnowledgeBase.ApplicationServices.Interfaces;
-using KnowledgeBase.ApplicationServices.Messaging;
-using KnowledgeBase.ApplicationServices.Messaging.TestDetails;
-using KnowledgeBase.ApplicationServices.Messaging.Tests;
+﻿using KnowledgeBase.Infrastructure.Interfaces;
+using KnowledgeBase.Infrastructure.Messaging;
+using KnowledgeBase.Infrastructure.Messaging.TestDetails;
+using KnowledgeBase.Infrastructure.Messaging.Tests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -22,11 +22,19 @@ namespace KnowledgeBase.API.Controllers
             _testService = testService ?? throw new ArgumentNullException("TestService in TestsController");
         }
 
-        [HttpGet("{testId}/users/{userId}")]
+        [HttpGet]
         [Produces(typeof(ServiceResponseBase))]
-        public async Task<IActionResult> GetTestDetailsByUserId([FromRoute] Guid userId, [FromRoute] Guid testId)
+        public async Task<IActionResult> GetTests()
         {
-            ServiceResponseBase response = await _testService.GetTestDetailsByUserId(new GetTestDetailsRequest(userId));
+            ServiceResponseBase response = await _testService.GetTests();
+            return Ok(response);
+        }
+
+        [HttpGet("{testId}")]
+        [Produces(typeof(ServiceResponseBase))]
+        public async Task<IActionResult> GetTestDetailsByUserId([FromRoute] Guid testId)
+        {
+            ServiceResponseBase response = await _testService.GetTestDetailsByTestId(new GetTestDetailsRequest(testId));
             return Ok(response);
         }
 
@@ -61,11 +69,11 @@ namespace KnowledgeBase.API.Controllers
             return Ok(response);
         }
 
-        [HttpPut("generator")]
+        [HttpPut("disciplines/{disciplineId}/generator")]
         [Produces(typeof(ServiceResponseBase))]
-        public async Task<IActionResult> Generate()
+        public async Task<IActionResult> Generate([FromRoute] Guid disciplineId, [FromBody] BodyModel body)
         {
-            ServiceResponseBase response = await _testService.PutGenerateTests(new PutGenerateTestRequest());
+            ServiceResponseBase response = await _testService.PutGenerateTests(new PutGenerateTestRequest(disciplineId, body));
             return Ok(response);
         }
     }

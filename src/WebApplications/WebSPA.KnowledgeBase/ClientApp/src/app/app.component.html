@@ -1,6 +1,5 @@
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
   <span class="navbar-brand col-sm-3 col-md-2 mr-0">Knowledge base</span>
-  <button class="form-control form-control-dark" type="button" *ngIf="!authenticated" (click)="markTestFinish($event)">Finish</button>
   <ul class="navbar-nav px-3">
     <li class="nav-item text-nowrap" *ngIf="authenticated" (click)="logoutClicked($event)">
       <a class="nav-link" href="#">Sign out</a>

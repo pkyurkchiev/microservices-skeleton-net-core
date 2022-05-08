@@ -18,12 +18,4 @@ export class AppService {
     else
       this.configurationService.settingsLoaded$.subscribe(x => this.knowledgeBaseUrl = this.configurationService.serverSettings.knowledgeBaseUrl);
   }
-
-  putMarkTestFinish(testId: string): Observable<boolean> {
-    let url = this.knowledgeBaseUrl + '/api/v1/tests/' + testId + '/finish';
-
-    return this.service.put(url, null).pipe(map((response: any) => {
-      return true;
-    }));
-  };
 }
